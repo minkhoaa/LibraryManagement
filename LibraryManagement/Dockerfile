@@ -1,24 +1,24 @@
-# Bước 1: Dùng image .NET SDK để build
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Base image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
+EXPOSE 80
 
-# Copy file csproj và restore packages
-COPY *.csproj ./
+# Build image
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy csproj and restore as distinct layers
+COPY *.sln .
+COPY LibraryManagement/*.csproj ./LibraryManagement/
 RUN dotnet restore
 
+# Copy everything else and build
+COPY . .
+WORKDIR /src/LibraryManagement
+RUN dotnet publish -c Release -o /app/publish
 
-# Copy toàn bộ source code và build ra thư mục out
-COPY . ./
-RUN dotnet publish -c Release -o out
-
-
-# Bước 2: Dùng image ASP.NET để chạy
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+# Final stage
+FROM base AS final
 WORKDIR /app
-COPY --from=build /app/out .
-
-# Cấu hình cổng cho Render
-ENV ASPNETCORE_URLS=http://+:8080
-EXPOSE 8080
-
-ENTRYPOINT ["dotnet", "LibraryManagement.dll"]
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "LibraryManagement .dll"]

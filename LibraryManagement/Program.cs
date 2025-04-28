@@ -8,6 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using LibraryManagement.Repository.InterFace;
+using LibraryManagement.Models;
+using Sprache;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +23,19 @@ DotNetEnv.Env.Load();
 builder.Configuration["ConnectionStrings:PostgreSQLConnection"] = Environment.GetEnvironmentVariable("CONNECTIONSTRINGS__PostgreSQLConnection");
 builder.Configuration["JWT:SecretKey"] = Environment.GetEnvironmentVariable("JWT__SecretKey");
 
+builder.Configuration["EmailSettings:SmtpServer"] = Environment.GetEnvironmentVariable("EMAILSETTINGS__SMTPSERVER");
+builder.Configuration["EmailSettings:SmtpPort"] = Environment.GetEnvironmentVariable("EMAILSETTINGS__SMTPPORT");
+builder.Configuration["EmailSettings:SenderEmail"] = Environment.GetEnvironmentVariable("EMAILSETTINGS__SENDEREMAIL");
+builder.Configuration["EmailSettings:SenderPassword"] = Environment.GetEnvironmentVariable("EMAILSETTINGS__SENDERPASSWORD");
+builder.Configuration["EmailSettings:EnableSSL"] = Environment.GetEnvironmentVariable("EMAILSETTINGS__ENABLESSL");
+
+builder.Configuration["CloudinarySettings:CloudName"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__CLOUDNAME");
+builder.Configuration["CloudinarySettings:ApiKey"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APIKEY");
+builder.Configuration["CloudinarySettings:ApiSecret"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APISECRET");
+
+
+
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -26,6 +44,17 @@ builder.Services.AddSwaggerGen();
 // Cấu hình cho phép tất cả các ứng dụng được gọi đến API
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
  policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
+
+
+builder.Services.AddSingleton(option =>
+{
+    var settings = option.GetRequiredService<IOptions<CloudinarySettings>>().Value;
+
+    var account = new Account(settings.CloudName, settings.ApiKey, settings.ApiSecret);
+    return new Cloudinary(account);
+
+}); 
 
 // Tạo chữ ký kết nối
 

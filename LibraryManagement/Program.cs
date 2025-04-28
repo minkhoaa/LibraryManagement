@@ -101,8 +101,7 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -110,10 +109,10 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "swagger"; // Swagger UI sẽ ở /docs
         c.DocumentTitle = "API Docs";
     });
-}
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

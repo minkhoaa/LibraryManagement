@@ -13,6 +13,7 @@ using Sprache;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using CloudinaryDotNet;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,14 +91,26 @@ builder.Services.AddAuthentication(options =>
 });
 
 
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+var emailConfig = builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>();
+
+
+
+
 // Life cycle DI
 builder.Services.AddScoped<IReaderRepository, ReaderRepository>();
 builder.Services.AddScoped<IAuthenRepository, AuthenRepository>();
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
-
-
+builder.Services.AddFluentEmail("noreply@gmail.com", "Your Name")
+                .AddSmtpSender(new System.Net.Mail.SmtpClient(emailConfig.SmtpServer)
+                {
+                    Port = emailConfig.SmtpPort,
+                    Credentials = new NetworkCredential(emailConfig.SenderEmail, emailConfig.SenderPassword), 
+                    EnableSsl =  emailConfig.EnableSSL
+                });
+builder.Services.AddMemoryCache();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

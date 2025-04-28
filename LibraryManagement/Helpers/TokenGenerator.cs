@@ -22,7 +22,7 @@ namespace LibraryManagement.Helpers
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, reader.ReaderUsername),
+                new Claim(ClaimTypes.Email, reader.ReaderUsername),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

@@ -63,8 +63,10 @@ builder.Services.AddDbContext<LibraryManagermentContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new() { Title = "LibraryManagement", Version = "v1" });
+});
 // Đăng ký sử dụng Mapper
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -102,7 +104,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.RoutePrefix = "swagger"; // Swagger UI sẽ ở /docs
+        c.DocumentTitle = "API Docs";
+    });
 }
 
 app.UseHttpsRedirection();
@@ -111,4 +118,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+
+app.UseCors();
 app.Run();

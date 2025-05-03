@@ -16,5 +16,8 @@ namespace LibraryManagement.Repository.IRepository
         public Task<bool> SendEmailConfirmation(SignUpModel signup);
 
         public Task<Reader?> AuthenticationAsync(string accessToken);
+
+        public Task<RefreshTokenResponse> refreshTokenAsync(string Token);
+
     }
 }

@@ -28,7 +28,6 @@ namespace LibraryManagement.Controllers
 
 
         [HttpPost("SignUpWithReceivedOtp")]
-
         public async Task<IActionResult> ConfirmOtpSignUp(ConfirmOtp confirmOtp)
         {
             var result = await _authenRepository.SignUpWithOtpAsync(confirmOtp);
@@ -52,6 +51,13 @@ namespace LibraryManagement.Controllers
                 reader.ReaderUsername,
                 reader.Email
             });
+        }
+
+        // Endpoint Refresh Token
+        [HttpPost("RefreshToken")]
+        public async Task<RefreshTokenResponse> RefreshToken([FromBody] string token)
+        {
+            return await _authenRepository.refreshTokenAsync(token);
         }
     } 
 }

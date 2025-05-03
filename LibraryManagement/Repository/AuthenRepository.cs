@@ -7,11 +7,8 @@ using LibraryManagement.Helpers;
 using LibraryManagement.Helpers.Interface;
 using LibraryManagement.Models;
 using LibraryManagement.Repository.IRepository;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging.Console;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -49,8 +46,13 @@ namespace LibraryManagement.Repository
             var reader = await _context.Readers.FirstOrDefaultAsync(reader => reader.ReaderUsername == request.username);
             if (reader == null || !BCrypt.Net.BCrypt.Verify(request.password, reader.ReaderPassword))
                 throw new Exception("Unauthenticated");
-            var token = _tokenGenerator.GenerateToken(reader);
-            return token;
+            var _token = _tokenGenerator.GenerateToken(reader);
+            var _refreshToken = _tokenGenerator.GenerateRefreshToken(reader);
+            return new AuthenticationResponse
+            {
+                Token = _token,
+                refreshToken = _refreshToken
+            };
         }
 
 
@@ -146,6 +148,23 @@ namespace LibraryManagement.Repository
             {
                 return null; 
             }
+        }
+
+        // Hàm refresh Token
+        public async Task<RefreshTokenResponse> refreshTokenAsync(string Token)
+        {
+            var reader = await AuthenticationAsync(Token);
+            if(reader == null)
+            {
+                throw new Exception("Invalid or Expired Token");
+            }
+
+            var accessTokenResponse = _tokenGenerator.GenerateToken(reader);
+
+            return new RefreshTokenResponse
+            {
+                AccessToken = accessTokenResponse
+            };
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using LibraryManagement.Dto.Response;
-using LibraryManagement.Models;
-using LibraryManagement.Repository;
+﻿using LibraryManagement.Models;
 
 namespace LibraryManagement.Helpers.Interface
 {
     public interface ITokenGenerator
     {
-        AuthenticationResponse GenerateToken(Reader reader);
+        public string GenerateToken(Reader reader);
+        public string GenerateRefreshToken(Reader reader);
     }
 }

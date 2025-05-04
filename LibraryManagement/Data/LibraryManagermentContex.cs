@@ -65,7 +65,7 @@ namespace LibraryManagement.Data
                 .HasKey(d => new { d.IdBookReceipt, d.IdBook });
 
             modelBuilder.Entity<CreateBook>()
-                .HasKey(cb => new { cb.IdHeaderBook, cb.IdOuthor });
+                .HasKey(cb => new { cb.IdHeaderBook, cb.IdAuthor });
         }
     }
 }

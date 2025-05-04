@@ -1,8 +1,5 @@
 ﻿using LibraryManagement.Dto.Request;
-using LibraryManagement.Dto.Response;
-using LibraryManagement.Helpers;
 using LibraryManagement.Repository.IRepository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagement.Controllers
@@ -35,23 +32,32 @@ namespace LibraryManagement.Controllers
 
         // Endpoint thêm độc giả
         [HttpPost("add_reader")]
-        public async Task<ApiResponse<ReaderResponse>> addNewReader(ReaderRequest request)
+        public async Task<IActionResult> addNewReader(ReaderRequest request)
         {
-            return await _readerRepository.addReaderAsync(request);
+            var result = await _readerRepository.addReaderAsync(request);
+            if (result.Success)
+                return Created("", result);
+            return BadRequest(result);
         }
 
         // Endpont sửa độc giả
         [HttpPut("update_reader/{idReader}")]
-        public async Task<ApiResponse<ReaderResponse>> updateReader(ReaderUpdateRequest request, Guid idReader)
+        public async Task<IActionResult> updateReader(ReaderUpdateRequest request, Guid idReader)
         {
-            return await _readerRepository.updateReaderAsync(request, idReader);
+            var result = await _readerRepository.updateReaderAsync(request, idReader);
+            if (result.Success)
+                return Ok(result);
+            return NotFound(result);
         }
 
         // Endpoint xóa độc giả
         [HttpDelete("delete_reader/{idReader}")]
-        public async Task<ApiResponse<string>> deleteReader(Guid idReader)
+        public async Task<IActionResult> deleteReader(Guid idReader)
         {
-            return await _readerRepository.deleteReaderAsync(idReader);
+            var result = await _readerRepository.deleteReaderAsync(idReader);
+            if (result.Success)
+                return Ok(result);
+            return NotFound(result);
         }
     }
 }

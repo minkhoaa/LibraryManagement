@@ -103,6 +103,9 @@ builder.Services.AddScoped<IAuthenRepository, AuthenRepository>();
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IHeaderBookRepository, HeaderBookRepository>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+
 
 builder.Services.AddFluentEmail("noreply@gmail.com", "Your Name")
                 .AddSmtpSender(new System.Net.Mail.SmtpClient(emailConfig.SmtpServer)

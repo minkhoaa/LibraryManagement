@@ -31,7 +31,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint thêm tác giả
         [HttpPost("add_author")]
-        public async Task<IActionResult> addAuthor(AuthorCreationRequest request)
+        public async Task<IActionResult> addAuthor(AuthorRequest request)
         {
             var result = await _authorRepository.addAuthorAsync(request);
             if (result.Success)
@@ -41,7 +41,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint sửa tác giả
         [HttpPut("update_author/{idAuthor}")]
-        public async Task<IActionResult> updateAuthor(AuthorUpdateRequest request, Guid idAuthor)
+        public async Task<IActionResult> updateAuthor(AuthorRequest request, Guid idAuthor)
         {
             var result = await _authorRepository.updateAuthorAsync(request, idAuthor);
             if (result.Success)

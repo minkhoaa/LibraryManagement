@@ -17,9 +17,16 @@ namespace LibraryManagement.Mapper
                 .ForMember(dest => dest.CreateDate, opt => opt.Ignore());
 
             // Mapper Author
-            CreateMap<AuthorCreationRequest, Author>();
+            CreateMap<AuthorRequest, Author>();
             CreateMap<Author, AuthorResponse>();
-            CreateMap<AuthorUpdateRequest, Author>();
+
+            // Mapper HeaderBook
+            CreateMap<HeaderBookRequest, HeaderBook>();
+            CreateMap<HeaderBook, HeaderBookResponse>();
+
+            // Mapper Book
+            CreateMap<BookRequest, Book>();
+            CreateMap<Book, BookResponse>();
 
             // Mapper Role
             CreateMap<RoleRequest, Role>();

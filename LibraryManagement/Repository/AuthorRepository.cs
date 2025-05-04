@@ -28,14 +28,14 @@ namespace LibraryManagement.Repository
         }
 
         // Thêm tác giả
-        public async Task<ApiResponse<AuthorResponse>> addAuthorAsync(AuthorCreationRequest request)
+        public async Task<ApiResponse<AuthorResponse>> addAuthorAsync(AuthorRequest request)
         {
             var newAuthor = _mapper.Map<Author>(request);
             _context.Authors.Add(newAuthor);
             await _context.SaveChangesAsync();
 
-            var AuthorResponse = _mapper.Map<AuthorResponse>(newAuthor);
-            return ApiResponse<AuthorResponse>.SuccessResponse("Thêm tác giả thành công", 201, AuthorResponse);
+            var authorResponse = _mapper.Map<AuthorResponse>(newAuthor);
+            return ApiResponse<AuthorResponse>.SuccessResponse("Thêm tác giả thành công", 201, authorResponse);
         }
 
         // Xóa tác giả
@@ -52,7 +52,7 @@ namespace LibraryManagement.Repository
         }
 
         // Sửa tác giả
-        public async Task<ApiResponse<AuthorResponse>> updateAuthorAsync(AuthorUpdateRequest request, Guid idAuthor)
+        public async Task<ApiResponse<AuthorResponse>> updateAuthorAsync(AuthorRequest request, Guid idAuthor)
         {
             var updateAuthor = await _context.Authors.FirstOrDefaultAsync(author => author.IdAuthor == idAuthor);
             if (updateAuthor == null)

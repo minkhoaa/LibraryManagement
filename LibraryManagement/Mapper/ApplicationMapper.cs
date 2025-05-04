@@ -12,11 +12,14 @@ namespace LibraryManagement.Mapper
             // Mapper Reader
             CreateMap<ReaderRequest, Reader>();
             CreateMap<Reader, ReaderResponse>();
-            CreateMap<ReaderCreationRequest, ReaderResponse>();
             CreateMap<ReaderUpdateRequest, Reader>()
                 .ForMember(dest => dest.ReaderPassword, opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.ReaderPassword)))
                 .ForMember(dest => dest.CreateDate, opt => opt.Ignore());
 
+            // Mapper Author
+            CreateMap<AuthorCreationRequest, Author>();
+            CreateMap<Author, AuthorResponse>();
+            CreateMap<AuthorUpdateRequest, Author>();
 
             // Mapper Role
             CreateMap<RoleRequest, Role>();

@@ -68,6 +68,5 @@ namespace LibraryManagement.Repository
             await _context.SaveChangesAsync();
             return ApiResponse<string>.SuccessResponse("Đã xóa độc giả", 200, "");
         }
-
     }
 }

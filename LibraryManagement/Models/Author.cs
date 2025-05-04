@@ -6,13 +6,22 @@ namespace LibraryManagement.Models
     public class Author
     {
         [Key]
-        public Guid IdOuthor { get; set; }
+        [Column("id_author")]
+        public Guid IdAuthor { get; set; }
+
+        [Column("id_typebook")]
         public Guid IdTypeBook { get; set; }
-        public string NameOuthor { get; set; }
-        public string Genre { get; set; }
+
+        [Column("name_author")]
+        public string NameAuthor { get; set; }
+
+        [Column("nationality")]
         public string Nationality { get; set; }
+
+        [Column("biography")]
         public string Biography { get; set; }
 
+        [ForeignKey("IdTypeBook")]
         public TypeBook TypeBook { get; set; }
     }
 

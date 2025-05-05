@@ -105,6 +105,10 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IHeaderBookRepository, HeaderBookRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<ITheBookRepository, TheBookRepository>();
+builder.Services.AddScoped<ITypeReaderRepository, TypeReaderRepository>();
+builder.Services.AddScoped<ITypeBookRepository, TypeBookRepository>();
+
 
 
 builder.Services.AddFluentEmail("noreply@gmail.com", "Your Name")

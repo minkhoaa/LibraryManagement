@@ -28,6 +28,18 @@ namespace LibraryManagement.Mapper
             CreateMap<BookRequest, Book>();
             CreateMap<Book, BookResponse>();
 
+            // Mapper TheBook
+            CreateMap<TheBookRequest, TheBook>();
+            CreateMap<TheBook, TheBookResponse>();
+
+            // Mapper TypeReader
+            CreateMap<TypeReaderRequest, TypeReader>();
+            CreateMap<TypeReader, TypeReaderResponse>();
+
+            // Mapper TypeBook 
+            CreateMap<TypeBookRequest, TypeBook>();
+            CreateMap<TypeBook, TypeBookResponse>();
+
             // Mapper Role
             CreateMap<RoleRequest, Role>();
             CreateMap<Role, RoleResponse>();

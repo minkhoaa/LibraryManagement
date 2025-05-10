@@ -16,12 +16,14 @@ namespace LibraryManagement.Controllers
         }
 
         // Endpoint lấy danh sách tác giả
-        [HttpGet("list_author")]
-        public async Task<IActionResult> gettListAuthor()
+        [HttpPost("list_author")]
+        public async Task<IActionResult> gettListAuthor([FromBody ]string token)
         {
             try
             {
-                return Ok(await _authorRepository.getListAuthor());
+                var result = await _authorRepository.getListAuthor(token);
+                if (result == null) return Unauthorized("Vui lòng đăng nhập");
+                return Ok(result); 
             }
             catch
             {

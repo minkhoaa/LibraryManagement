@@ -1,5 +1,6 @@
 ﻿using LibraryManagement.Dto.Request;
 using LibraryManagement.Repository.InterFace;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagement.Controllers
@@ -14,6 +15,7 @@ namespace LibraryManagement.Controllers
         {
             _bookRepository = bookRepository;
         }
+
 
         // Endpoint lấy danh sách sách
         [HttpGet("list_book")]

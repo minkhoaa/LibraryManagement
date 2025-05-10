@@ -17,17 +17,12 @@ namespace LibraryManagement.Controllers
 
         // Endpoint lấy danh sách độc giả
     //    [Authorize(Roles = "Reader")]
-        [HttpGet("list_reader")]
-        public async Task<IActionResult> gettAllReader()
+        [HttpPost("list_reader")]
+        public async Task<IActionResult> gettAllReader([FromBody]string token)
         {
-            try
-            {
-                return Ok(await _readerRepository.getAllReaderAsync());
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            var result = await _readerRepository.getAllReaderAsync(token);
+            if (result == null) return Unauthorized();
+            return Ok(result);   
         }
 
         // Endpoint thêm độc giả
@@ -58,6 +53,21 @@ namespace LibraryManagement.Controllers
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
+        }
+
+        [HttpPost("find_reader")]
+        public async Task<IActionResult> findReader(FindReaderInputDto dto)
+        {
+            try
+            {
+                var result = await _readerRepository.findReaderAsync(dto);
+                if (result == null) return Unauthorized("Yêu cầu quyền admin");
+                return Ok(result);
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
     }
 }

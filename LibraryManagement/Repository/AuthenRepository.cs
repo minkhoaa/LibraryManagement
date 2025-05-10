@@ -166,5 +166,14 @@ namespace LibraryManagement.Repository
                 AccessToken = accessTokenResponse
             };
         }
+
+        public async Task<int> UserRoleCheck(string token)
+        {
+            var user = await AuthenticationAsync(token);
+            if (user == null) return -1;
+            if (user.RoleName.ToLower() == "admin") return 0;
+            if (user.RoleName.ToLower() == "reader") return 1;
+            return -1;
+        }
     }
 }

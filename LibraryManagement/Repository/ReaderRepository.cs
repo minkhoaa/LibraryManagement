@@ -14,8 +14,11 @@ namespace LibraryManagement.Repository
         private readonly LibraryManagermentContext _context;
         private readonly IMapper _mapper;
 
-        public ReaderRepository(LibraryManagermentContext contex, IMapper mapper)
+        private readonly IAuthenRepository _account; 
+
+        public ReaderRepository(LibraryManagermentContext contex, IMapper mapper, IAuthenRepository authen)
         {
+            _account = authen;
             _context = contex;
             _mapper = mapper;
         }
@@ -34,9 +37,16 @@ namespace LibraryManagement.Repository
         }
 
         // Hàm lấy danh sách độc giả
-        public async Task<List<ReaderResponse>> getAllReaderAsync()
+        public async Task<List<ReaderResponse>> getAllReaderAsync(string token)
         {
-            var listReaders = await _context.Readers.ToListAsync();
+            var reader = await _account.AuthenticationAsync(token);
+
+            var role = await _account.UserRoleCheck(token);
+
+            if (reader == null || role != 0) return null!;
+
+            
+            var listReaders = await _context.Readers.ToListAsync(); 
             return _mapper.Map<List<ReaderResponse>>(listReaders);
         }
 
@@ -67,6 +77,25 @@ namespace LibraryManagement.Repository
             _context.Readers.Remove(deleteReader);
             await _context.SaveChangesAsync();
             return ApiResponse<string>.SuccessResponse("Đã xóa độc giả", 200, "");
+        }
+
+        public async Task<FindReaderOutputDto> findReaderAsync(FindReaderInputDto dto)
+        {
+            var user = await _account.AuthenticationAsync(dto.token);
+            var role = await _account.UserRoleCheck(dto.token);
+            if (user == null || role != 0) return null!;
+
+            var listReader = await _context.Readers.Where(x => x.ReaderUsername == dto.username).Select(a => new FindReaderOutputDto
+            {
+                username = a.ReaderUsername,
+                phone = a.Phone!, 
+                Email = a.Email!,
+                password = a.ReaderPassword,
+                DateCreate = a.CreateDate
+            }
+            ).FirstOrDefaultAsync();
+            return listReader!;
+
         }
     }
 }

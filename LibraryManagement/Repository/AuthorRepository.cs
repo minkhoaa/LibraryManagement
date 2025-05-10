@@ -5,7 +5,9 @@ using LibraryManagement.Dto.Response;
 using LibraryManagement.Helpers;
 using LibraryManagement.Models;
 using LibraryManagement.Repository.InterFace;
+using LibraryManagement.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace LibraryManagement.Repository
 {
@@ -13,16 +15,21 @@ namespace LibraryManagement.Repository
     {
         private readonly LibraryManagermentContext _context;
         private readonly IMapper _mapper;
+        private readonly IAuthenRepository _account; 
 
-        public AuthorRepository(LibraryManagermentContext context, IMapper mapper)
+        public AuthorRepository(LibraryManagermentContext context, IMapper mapper, IAuthenRepository account)
         {
             _context = context;
             _mapper = mapper;
-        }
+            _account = account;         }
 
         // Lấy danh sách tác giả
-        public async Task<List<AuthorResponse>> getListAuthor()
+        public async Task<List<AuthorResponse>> getListAuthor(string token)
         {
+            var reader = await _account.AuthenticationAsync(token);
+            if (reader == null) return null!;
+
+
             var listAuthor = await _context.Authors.ToListAsync();
             return _mapper.Map<List<AuthorResponse>>(listAuthor);
         }

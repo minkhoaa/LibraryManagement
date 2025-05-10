@@ -65,7 +65,7 @@ namespace LibraryManagement.Repository
 
             int nextNumber = 1;
 
-            if (nextID != null && nextID.IdTheBook.StartsWith("tb00001")) // Kiểm tra có tổn tại sách không và ký tự đầu tiên là book
+            if (nextID != null && nextID.IdTheBook.StartsWith("tb")) // Kiểm tra có tổn tại sách không và ký tự đầu tiên là book
             {
                 string numberPart = nextID.IdTheBook.Substring(2);
                 if (int.TryParse(numberPart, out int parsed)) // Kiểm tra chuyển đổi từ string qua int

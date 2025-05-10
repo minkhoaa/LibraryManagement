@@ -6,11 +6,13 @@ namespace LibraryManagement.Models
     public class BookReceipt
     {
         [Key]
+        [Column("id_bookreceipt")]
         public Guid IdBookReceipt { get; set; }
+
+        [Column("id_reader")]
         public Guid IdReader { get; set; }
-        public DateTime ReceivedDate { get; set; }
 
-        public Reader Reader { get; set; }
+        [Column("received_date")]
+        public DateTime ReceivedDate { get; set; } = DateTime.UtcNow;
     }
-
 }

@@ -32,7 +32,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint thêm độc giả
         [HttpPost("add_reader")]
-        public async Task<IActionResult> addNewReader(ReaderRequest request)
+        public async Task<IActionResult> addNewReader([FromBody]ReaderRequest request)
         {
             var result = await _readerRepository.addReaderAsync(request);
             if (result.Success)

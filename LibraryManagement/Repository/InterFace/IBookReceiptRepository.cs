@@ -1,0 +1,14 @@
+﻿using LibraryManagement.Dto.Request;
+using LibraryManagement.Dto.Response;
+using LibraryManagement.Helpers;
+
+namespace LibraryManagement.Repository.InterFace
+{
+    public interface IBookReceiptRepository
+    {
+        Task<ApiResponse<BooKReceiptResponse>> addBookReceiptAsync(BookReceiptRequest request);
+        Task<ApiResponse<BooKReceiptResponse>> updateBookReceiptAsync(BookReceiptRequest request, Guid idBookReipt);
+
+        Task<ApiResponse<string>> deleteBookReceiptAsync(Guid idBookReipt);
+     }
+}

@@ -9,6 +9,7 @@ namespace LibraryManagement.Repository.InterFace
         public Task<ApiResponse<TheBookResponse>> addTheBookAsync(TheBookRequest request);
         public Task<ApiResponse<TheBookResponse>> updateTheBookAsync(TheBookRequest request, string idTheBook);
         public Task<ApiResponse<string>> deleteTheBookAsync(string idTheBook);
+        public Task<string> generateNextIdTheBookAsync();
 
     }
 }

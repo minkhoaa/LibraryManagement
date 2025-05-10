@@ -33,7 +33,19 @@ namespace LibraryManagement.Repository
             var newHeaderBook = _mapper.Map<HeaderBook>(request);
             _context.HeaderBooks.Add(newHeaderBook);
             await _context.SaveChangesAsync();
-
+            if (request.IdAuthors != null && request.IdAuthors.Any()) // Duyệt qua danh sách tác giả
+            {
+                foreach (var authorId in request.IdAuthors)
+                {
+                    var createBook = new CreateBook
+                    {
+                        IdHeaderBook = newHeaderBook.IdHeaderBook,
+                        IdAuthor = authorId
+                    };
+                    _context.CreateBooks.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
+                }
+                await _context.SaveChangesAsync();  
+            }
             var headerBookResponse = _mapper.Map<HeaderBookResponse>(newHeaderBook);
             return ApiResponse<HeaderBookResponse>.SuccessResponse("Thêm đầu sách thành công", 201, headerBookResponse);
         }

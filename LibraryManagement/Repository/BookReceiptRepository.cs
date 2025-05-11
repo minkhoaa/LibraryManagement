@@ -11,44 +11,86 @@ namespace LibraryManagement.Repository
     public class BookReceiptRepository : IBookReceiptRepository
     {
         private readonly LibraryManagermentContext _context;
-        private readonly IBookRepository _bookRepository;
-        public readonly ITheBookRepository _theBookRepository;
-        public BookReceiptRepository(LibraryManagermentContext context, IBookRepository bookRepository, ITheBookRepository theBookRepository)
+        public BookReceiptRepository(LibraryManagermentContext context)
         {
             _context = context;
-            _bookRepository = bookRepository;
-            _theBookRepository = theBookRepository;
+        }
+
+        // Hàm tạo Id sách
+        public async Task<string> generateNextIdBookAsync()
+        {
+            var nextID = await _context.Books.OrderByDescending(id => id.IdBook).FirstOrDefaultAsync();
+
+            int nextNumber = 1;
+
+            if (nextID != null && nextID.IdBook.StartsWith("book")) // Kiểm tra có tổn tại sách không và ký tự đầu tiên là book
+            {
+                string numberPart = nextID.IdBook.Substring(4);
+                if (int.TryParse(numberPart, out int parsed)) // Kiểm tra chuyển đổi từ string qua int
+                {
+                    nextNumber = parsed + 1;
+                }
+            }
+            return $"book{nextNumber:D3}";
+        }
+
+        // Hàm tạo Id cuốn sách
+        public async Task<string> generateNextIdTheBookAsync()
+        {
+            var nextID = await _context.TheBooks.OrderByDescending(id => id.IdTheBook).FirstOrDefaultAsync();
+
+            int nextNumber = 1;
+
+            if (nextID != null && nextID.IdTheBook.StartsWith("tb")) // Kiểm tra có tổn tại sách không và ký tự đầu tiên là book
+            {
+                string numberPart = nextID.IdTheBook.Substring(2);
+                if (int.TryParse(numberPart, out int parsed)) // Kiểm tra chuyển đổi từ string qua int
+                {
+                    nextNumber = parsed + 1;
+                }
+            }
+            return $"tb{nextNumber:D5}";
         }
 
         public async Task<ApiResponse<BooKReceiptResponse>> addBookReceiptAsync(BookReceiptRequest request)
         {
+            var headerBook = await _context.HeaderBooks.FirstOrDefaultAsync(hb => hb.NameHeaderBook == request.headerBook.NameHeaderBook);
             // Tạo HeaderBook
-            var headerBook = new HeaderBook
+            if (headerBook == null)
             {
-                IdTypeBook = request.headerBook.IdTypeBook,
-                NameHeaderBook = request.headerBook.NameHeaderBook,
-                DescribeBook = request.headerBook.DescribeBook,
-            };
-            _context.HeaderBooks.Add(headerBook);
-            await _context.SaveChangesAsync();
-
-            if (request.headerBook.IdAuthors != null && request.headerBook.IdAuthors.Any()) // Duyệt qua danh sách tác giả
-            {
-                foreach (var authorId in request.headerBook.IdAuthors)
+                headerBook = new HeaderBook
                 {
-                    var createBook = new CreateBook
+                    IdTypeBook = request.headerBook.IdTypeBook,
+                    NameHeaderBook = request.headerBook.NameHeaderBook,
+                    DescribeBook = request.headerBook.DescribeBook,
+                };
+                _context.HeaderBooks.Add(headerBook);
+                await _context.SaveChangesAsync();
+
+                if (request.headerBook.IdAuthors != null && request.headerBook.IdAuthors.Any()) // Duyệt qua danh sách tác giả
+                {
+                    foreach (var authorId in request.headerBook.IdAuthors)
                     {
-                        IdHeaderBook = headerBook.IdHeaderBook,
-                        IdAuthor = authorId
-                    };
-                    _context.CreateBooks.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
+                        var createBook = new CreateBook
+                        {
+                            IdHeaderBook = headerBook.IdHeaderBook,
+                            IdAuthor = authorId
+                        };
+                        _context.CreateBooks.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
+                    }
                 }
+            }
+            else
+            {
+                headerBook.DescribeBook = request.headerBook.DescribeBook; // Luôn cập nhật Describe của Book
+                _context.HeaderBooks.Update(headerBook);
+                await _context.SaveChangesAsync();
             }
 
             // Tạo Book
             var book = new Book
             {
-                IdBook = await _bookRepository.generateNextIdBookAsync(),
+                IdBook = await generateNextIdBookAsync(),
                 IdHeaderBook = headerBook.IdHeaderBook,
                 Publisher = request.book.Publisher,
                 ReprintYear = request.book.ReprintYear,
@@ -80,7 +122,7 @@ namespace LibraryManagement.Repository
                 };
                 _context.DetailBookReceipts.Add(detailEntry);
 
-                var firstId = await _theBookRepository.generateNextIdTheBookAsync();
+                var firstId = await generateNextIdTheBookAsync();
                 var nextID = int.Parse(firstId.Substring(2));
                 for (int i = 0; i < detail.Quantity; i++) // Tạo THEBOOK thông qua số lượng từ BOOK
                 {
@@ -98,7 +140,6 @@ namespace LibraryManagement.Repository
                     UnitPrice = request.book.ValueOfBook
                 });
             }
-
             await _context.SaveChangesAsync();
 
             var response = new BooKReceiptResponse

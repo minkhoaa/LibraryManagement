@@ -1,5 +1,4 @@
 ﻿using LibraryManagement.Dto.Request;
-using LibraryManagement.Repository;
 using LibraryManagement.Repository.InterFace;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,7 +25,7 @@ namespace LibraryManagement.Controllers
             else return BadRequest(result);
         }
 
-        // Endpoint xóa đầu sách
+        // Endpoint xóa phiếu nhập sách
         [HttpDelete("delete_bookreceipt/{idBookReceipt}")]
         public async Task<IActionResult> deleteBookReceipt(Guid idBookReceipt)
         {

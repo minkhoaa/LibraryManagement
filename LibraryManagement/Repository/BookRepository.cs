@@ -226,5 +226,10 @@ namespace LibraryManagement.Repository
         {
             throw new NotImplementedException();
         }
+
+        public Task<string> generateNextIdBookAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

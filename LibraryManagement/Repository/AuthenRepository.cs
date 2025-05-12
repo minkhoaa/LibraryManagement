@@ -24,12 +24,10 @@ namespace LibraryManagement.Repository
         private readonly IFluentEmail _fluentEmail;
         private readonly IConfiguration _configuration;
         private readonly IMemoryCache _tempOtp;
-        private readonly IReaderRepository _readerRepository;
-
         private static readonly Guid DefaultTypeReaderId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6");
 
         public AuthenRepository(LibraryManagermentContext context, ITokenGenerator tokenGenerator,
-            IMapper mapper, IFluentEmail email, IMemoryCache memoryCache, IConfiguration configuration, IReaderRepository reader)
+            IMapper mapper, IFluentEmail email, IMemoryCache memoryCache, IConfiguration configuration, IReaderRepository  reader)
         {
             _configuration = configuration; 
             _tempOtp = memoryCache;
@@ -37,7 +35,6 @@ namespace LibraryManagement.Repository
             _context = context;
             _tokenGenerator = tokenGenerator;
             _mapper = mapper;
-            _readerRepo = reader;
         }
 
         // Hàm đăng nhập
@@ -77,7 +74,6 @@ namespace LibraryManagement.Repository
 
             var reader = new Reader
             {
-                IdReader = await _readerRepository.generateNextIdReaderAsync(),
                 ReaderUsername = confirmOtp.Email,
                 ReaderPassword = BCrypt.Net.BCrypt.HashPassword(cacheData.Password),
                 IdTypeReader = DefaultTypeReaderId,

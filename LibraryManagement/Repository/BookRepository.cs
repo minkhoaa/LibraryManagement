@@ -221,5 +221,15 @@ namespace LibraryManagement.Repository
             };
             return ApiResponse<HeaderBookResponse>.SuccessResponse("Cập nhật sách thành công", 201, response);
         }
+
+        public Task<BookResponse> findPost(string name_book)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> generateNextIdBookAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -46,11 +46,8 @@ namespace LibraryManagement.Controllers
             var reader = await _authenRepository.AuthenticationAsync(token);
             if (reader == null) return NotFound();
 
-            return Ok(new
-            {
-                reader.ReaderUsername,
-                reader.Email
-            });
+            return Ok(reader);
+                
         }
 
         // Endpoint Refresh Token

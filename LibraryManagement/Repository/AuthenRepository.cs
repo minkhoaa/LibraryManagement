@@ -24,9 +24,11 @@ namespace LibraryManagement.Repository
         private readonly IFluentEmail _fluentEmail;
         private readonly IConfiguration _configuration;
         private readonly IMemoryCache _tempOtp;
-        private readonly IReaderRepository _readerRepository;
 
         private static readonly Guid DefaultTypeReaderId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6");
+
+
+
 
         public AuthenRepository(LibraryManagermentContext context, ITokenGenerator tokenGenerator,
             IMapper mapper, IFluentEmail email, IMemoryCache memoryCache, IConfiguration configuration)
@@ -37,6 +39,24 @@ namespace LibraryManagement.Repository
             _context = context;
             _tokenGenerator = tokenGenerator;
             _mapper = mapper;
+        }
+
+
+        public async Task<string> generateNextIdReaderAsync()
+        {
+            var nextID = await _context.Readers.OrderByDescending(id => id.IdReader).FirstOrDefaultAsync();
+
+            int nextNumber = 1;
+
+            if (nextID != null && nextID.IdReader.StartsWith("rd"))
+            {
+                string numberPart = nextID.IdReader.Substring(2);
+                if (int.TryParse(numberPart, out int parsed))
+                {
+                    nextNumber = parsed + 1;
+                }
+            }
+            return $"rd{nextNumber:D5}";
         }
 
         // Hàm đăng nhập
@@ -76,14 +96,14 @@ namespace LibraryManagement.Repository
 
             var reader = new Reader
             {
-                IdReader = await _readerRepository.generateNextIdReaderAsync(),
+                IdReader = await generateNextIdReaderAsync(),
                 ReaderUsername = confirmOtp.Email,
                 ReaderPassword = BCrypt.Net.BCrypt.HashPassword(cacheData.Password),
                 IdTypeReader = DefaultTypeReaderId,
                 RoleName = newRole.RoleName
             };
-            _context.Readers.Add(reader);
-
+           
+            await _context.Readers.AddAsync(reader);
             await _context.SaveChangesAsync();
             return true;
         }

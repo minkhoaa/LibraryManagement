@@ -17,7 +17,6 @@ namespace LibraryManagement.Repository
         private readonly IAuthenRepository _account;
         private readonly IParameterRepository _parameterRepository;
         private readonly IUpLoadImageFileRepository _upLoadImageFileRepository;
-
         public ReaderRepository(LibraryManagermentContext contex, 
                                 IMapper mapper, 
                                 IAuthenRepository authen,
@@ -32,7 +31,7 @@ namespace LibraryManagement.Repository
         }
 
         // Hàm tạo Id độc giả
-        public async Task<string> generateNextIdReaderAsync()
+         public async Task<string> generateNextIdReaderAsync()
         {
             var nextID = await _context.Readers.OrderByDescending(id => id.IdReader).FirstOrDefaultAsync();
 

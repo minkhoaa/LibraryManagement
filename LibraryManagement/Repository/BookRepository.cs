@@ -85,5 +85,10 @@ namespace LibraryManagement.Repository
             }
             return $"book{nextNumber:D3}";
         }
+
+        public Task<BookResponse> findPost(string name_book)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

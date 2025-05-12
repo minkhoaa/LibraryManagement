@@ -10,7 +10,7 @@ namespace LibraryManagement.Models
         public Guid IdBookReceipt { get; set; }
 
         [Column("id_reader")]
-        public Guid IdReader { get; set; }
+        public string IdReader { get; set; }
 
         [Column("received_date")]
         public DateTime ReceivedDate { get; set; } = DateTime.UtcNow;

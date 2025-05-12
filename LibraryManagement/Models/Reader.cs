@@ -8,7 +8,7 @@ namespace LibraryManagement.Models
     {
         [Key]
         [Column("id_reader")]
-        public Guid IdReader { get; set; }
+        public string IdReader { get; set; }
 
         [Column("id_typereader")]
         public Guid IdTypeReader { get; set; }
@@ -27,6 +27,9 @@ namespace LibraryManagement.Models
 
         [Column("phone")]
         public string? Phone { get; set; }
+
+        [Column("dob")]
+        public DateTime Dob { get; set; }
 
         [Column("create_date")]
         public DateTime CreateDate { get; set; } = DateTime.UtcNow;

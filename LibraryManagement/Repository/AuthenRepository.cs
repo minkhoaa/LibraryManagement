@@ -10,6 +10,7 @@ using LibraryManagement.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Validations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -65,6 +66,9 @@ namespace LibraryManagement.Repository
             var reader = await _context.Readers.FirstOrDefaultAsync(reader => reader.ReaderUsername == request.username);
             if (reader == null || !BCrypt.Net.BCrypt.Verify(request.password, reader.ReaderPassword))
                 throw new Exception("Unauthenticated");
+
+            
+
             var _token = _tokenGenerator.GenerateToken(reader);
             var _refreshToken = _tokenGenerator.GenerateRefreshToken(reader);
             return new AuthenticationResponse
@@ -138,7 +142,7 @@ namespace LibraryManagement.Repository
             }
         }
 
-        public async Task<Reader?> AuthenticationAsync(string accessToken)
+        public async Task<ReaderAuthenticationResponse?> AuthenticationAsync(string accessToken)
         {
             if (string.IsNullOrEmpty(accessToken)) return null;
 
@@ -158,7 +162,20 @@ namespace LibraryManagement.Repository
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var email = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
                 if (string.IsNullOrEmpty(email)) return null;
-                var reader = await _context.Readers.FirstOrDefaultAsync(x => x.ReaderUsername == email);
+                var reader = await _context.Readers.Where(x => x.ReaderUsername == email).Select( a => new ReaderAuthenticationResponse
+                {
+                    IdReader = a.IdReader, 
+                    IdTypeReader = a.IdTypeReader,
+                    NameReader = a.NameReader,
+                    Sex=a.Sex, 
+                    Address = a.Address, 
+                    Email = a.Email, 
+                    Dob = a.Dob,
+                    CreateDate = a.CreateDate, 
+                    ExpiryDate = a.ExpiryDate,
+                    ReaderUsername = a.ReaderUsername, 
+                    RoleName = a.RoleName,
+                }).FirstOrDefaultAsync() ;
                 return reader;
             }
             catch
@@ -170,8 +187,14 @@ namespace LibraryManagement.Repository
         // Hàm refresh Token
         public async Task<RefreshTokenResponse> refreshTokenAsync(string Token)
         {
-            var reader = await AuthenticationAsync(Token);
-            if(reader == null)
+            var user = await AuthenticationAsync(Token);
+           
+            if (user == null)
+            {
+                throw new Exception("Invalid or Expired Token");
+            }
+             var reader = await _context.Readers.FirstOrDefaultAsync(x => x.IdReader == user.IdReader);
+            if ( reader == null)
             {
                 throw new Exception("Invalid or Expired Token");
             }

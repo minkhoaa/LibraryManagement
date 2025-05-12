@@ -1,4 +1,5 @@
-﻿using LibraryManagement.Models;
+﻿using LibraryManagement.Dto.Response;
+using LibraryManagement.Models;
 
 namespace LibraryManagement.Helpers.Interface
 {

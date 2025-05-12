@@ -15,7 +15,7 @@ namespace LibraryManagement.Repository.IRepository
 
         public Task<bool> SendEmailConfirmation(SignUpModel signup);
 
-        public Task<Reader?> AuthenticationAsync(string accessToken);
+        public Task<ReaderAuthenticationResponse?> AuthenticationAsync(string accessToken);
 
         public Task<int> UserRoleCheck(string token); 
 

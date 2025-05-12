@@ -14,5 +14,6 @@
         public string ReaderAccount { get; set; }
         public string ReaderPassword { get; set; }
         public decimal TotalDebt { get; set; }
+        public string UrlAvatar { get; set; }
     }
 }

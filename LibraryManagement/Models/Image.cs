@@ -6,15 +6,19 @@ namespace LibraryManagement.Models
     public class Image
     {
         [Key]
+        [Column("id_img")]
         public Guid IdImg { get; set; }
+
+        [Column("id_headerbook")]
         public Guid? IdHeaderBook { get; set; }
-        public Guid? IdReader { get; set; }
-        public Guid? IdOuthor { get; set; }
+
+        [Column("id_reader")]
+        public string IdReader { get; set; }
+
+        [Column("id_author")]
+        public Guid? IdAuthor { get; set; }
+
+        [Column("url")]
         public string Url { get; set; }
-
-        public HeaderBook HeaderBook { get; set; }
-        public Reader Reader { get; set; }
-        public Author Author { get; set; }
     }
-
 }

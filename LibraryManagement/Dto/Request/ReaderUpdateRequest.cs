@@ -9,5 +9,6 @@
         public DateTime Dob { get; set; }
         public string Phone { get; set; }
         public string ReaderPassword { get; set; }
+        public IFormFile AvatarImage { get; set; }
     }
 }

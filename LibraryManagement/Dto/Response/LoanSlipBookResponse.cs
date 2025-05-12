@@ -1,6 +1,6 @@
 ﻿namespace LibraryManagement.Dto.Response
 {
-    public class LoanSlipResponse
+    public class LoanSlipBookResponse
     {
         public DateTime BorrowDate { get; set; }
         public DateTime ReturnDate { get; set; }

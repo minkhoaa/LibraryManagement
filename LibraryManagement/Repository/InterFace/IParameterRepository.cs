@@ -1,0 +1,14 @@
+﻿using LibraryManagement.Dto.Request;
+using LibraryManagement.Dto.Response;
+using LibraryManagement.Helpers;
+
+namespace LibraryManagement.Repository.InterFace
+{
+    public interface IParameterRepository
+    {
+        Task<ApiResponse<ParameterResponse>> addParameterAsync(ParameterRequest request);
+        Task<ApiResponse<ParameterResponse>> updateParameterAsync(ParameterRequest request, Guid idParameter);
+        Task<ApiResponse<string>> deleteParameterAsync(Guid idParameter);
+        Task<int> getValueAsync(string nameParameter);
+    }
+}

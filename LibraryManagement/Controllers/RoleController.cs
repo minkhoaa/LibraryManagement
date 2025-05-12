@@ -19,7 +19,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint tạo role mới
         [HttpPost("add_role")]
-        public async Task<ApiResponse<RoleResponse>> addNewRole(RoleRequest request)
+        public async Task<ApiResponse<RoleResponse>> addNewRole([FromBody] RoleRequest request)
         {
             return await _roleRepository.addRoleAsync(request);
         }
@@ -33,7 +33,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint sửa role
         [HttpPut("update_role")]
-        public async Task<ApiResponse<RoleResponse>> updateRole(RoleRequest request)
+        public async Task<ApiResponse<RoleResponse>> updateRole([FromBody] RoleRequest request)
         {
             return await _roleRepository.updateRoleAsync(request);
         }

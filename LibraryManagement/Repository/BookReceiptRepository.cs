@@ -92,9 +92,9 @@ namespace LibraryManagement.Repository
             {
                 IdBook = await generateNextIdBookAsync(),
                 IdHeaderBook = headerBook.IdHeaderBook,
-                Publisher = request.book.Publisher,
-                ReprintYear = request.book.ReprintYear,
-                ValueOfBook = request.book.ValueOfBook
+                Publisher = request.headerBook.bookCreateRequest.Publisher,
+                ReprintYear = request.headerBook.bookCreateRequest.ReprintYear,
+                ValueOfBook = request.headerBook.bookCreateRequest.ValueOfBook
             };
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
@@ -118,7 +118,7 @@ namespace LibraryManagement.Repository
                     IdBookReceipt = bookReceipt.IdBookReceipt,
                     IdBook = book.IdBook,
                     Quantity = detail.Quantity,
-                    UnitPrice = request.book.ValueOfBook
+                    UnitPrice = request.headerBook.bookCreateRequest.ValueOfBook
                 };
                 _context.DetailBookReceipts.Add(detailEntry);
 
@@ -137,7 +137,7 @@ namespace LibraryManagement.Repository
                 detailResponses.Add(new DetailBookReceiptResponse // Lưu vào response để trả về danh sách
                 {
                     Quantity = detail.Quantity,
-                    UnitPrice = request.book.ValueOfBook
+                    UnitPrice = request.headerBook.bookCreateRequest.ValueOfBook
                 });
             }
             await _context.SaveChangesAsync();

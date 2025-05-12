@@ -34,6 +34,10 @@ namespace LibraryManagement.Mapper
             // Mapper Role
             CreateMap<RoleRequest, Role>();
             CreateMap<Role, RoleResponse>();
+
+            // Mapper Parameter
+            CreateMap<ParameterRequest, Parameter>();
+            CreateMap<Parameter, ParameterResponse>();
         }
     }
 }

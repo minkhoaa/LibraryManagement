@@ -60,5 +60,12 @@ namespace LibraryManagement.Controllers
                 return Ok(result);
             return NotFound(result);
         }
+        [HttpPost("findAuthor")]
+        public async Task<IActionResult> findAuthor([FromBody] FindAuthorInputDto dto)
+        {
+            var result = await _authorRepository.findAuthor(dto);
+            if (result == null) return Unauthorized("Không có quyền admin");
+            return Ok(result);
+        }
     }
 }

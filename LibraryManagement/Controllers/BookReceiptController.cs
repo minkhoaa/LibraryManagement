@@ -34,5 +34,12 @@ namespace LibraryManagement.Controllers
                 return Ok(result);
             return NotFound(result);
         }
+        [HttpPost("getAllReceipt")]
+        public async Task<IActionResult> getAllReceipt([FromBody]string token)
+        {
+            var result = await _bookReceiptRepository.getAllReceiptHistory(token);
+            if (result == null) return Unauthorized("Không có quyền admin");
+            return Ok(result);
+        }
     }
 }

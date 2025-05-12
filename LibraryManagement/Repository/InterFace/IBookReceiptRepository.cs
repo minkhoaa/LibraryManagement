@@ -12,5 +12,7 @@ namespace LibraryManagement.Repository.InterFace
         Task<ApiResponse<string>> deleteBookReceiptAsync(Guid idBookReipt);
         public Task<string> generateNextIdBookAsync();
         public Task<string> generateNextIdTheBookAsync();
+
+        public Task<List<BookReceiptInformationOutput>> getAllReceiptHistory(string token);
      }
 }

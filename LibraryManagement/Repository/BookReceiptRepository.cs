@@ -5,6 +5,7 @@ using LibraryManagement.Helpers;
 using LibraryManagement.Models;
 using LibraryManagement.Repository.InterFace;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
 
 namespace LibraryManagement.Repository
 {
@@ -191,6 +192,44 @@ namespace LibraryManagement.Repository
         public async Task<ApiResponse<BooKReceiptResponse>> updateBookReceiptAsync(BookReceiptRequest request, Guid idBookReipt)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<BookReceiptInformationOutput>> getAllReceiptHistory(string token)
+        {
+            var result = await _context.Readers
+                 .Join(_context.BookReceipts,
+                 reader => reader.IdReader,
+                 receipt => receipt.IdReader,
+                 (reader, receipt) => new { reader, receipt })
+                 .Join(
+                _context.DetailBookReceipts,
+                combined => combined.receipt.IdBookReceipt,
+                detail => detail.IdBookReceipt,
+                (combined, detail) => new { combined.reader, combined.receipt, detail }
+               )
+                 .Join(_context.Books,
+                 combined => combined.detail.IdBook,
+                 book => book.IdBook,
+                 (combined, book) => new
+                 {
+                     combined.reader,
+                     combined.receipt,
+                     combined.detail,
+                     book
+                 })
+                 .Select(x => new BookReceiptInformationOutput
+                 {
+                     IdReader = x.reader.IdReader,
+                     ReaderName = x.reader.NameReader,
+                     receivedDate = x.receipt.ReceivedDate,
+                     Quantity = x.detail.Quantity,
+                     unitprice = x.detail.UnitPrice,
+                     IdBook = x.book.IdBook,
+                   
+
+                 }).ToListAsync();
+            return result;
+                
         }
     }
 }

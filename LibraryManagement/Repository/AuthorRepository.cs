@@ -6,8 +6,10 @@ using LibraryManagement.Helpers;
 using LibraryManagement.Models;
 using LibraryManagement.Repository.InterFace;
 using LibraryManagement.Repository.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace LibraryManagement.Repository
 {
@@ -27,7 +29,8 @@ namespace LibraryManagement.Repository
         public async Task<List<AuthorResponse>> getListAuthor(string token)
         {
             var reader = await _account.AuthenticationAsync(token);
-            if (reader == null) return null!;
+            var role = await _account.UserRoleCheck(token); 
+            if (reader == null || role != 0) return null!;
 
 
             var listAuthor = await _context.Authors.ToListAsync();
@@ -72,6 +75,17 @@ namespace LibraryManagement.Repository
             await _context.SaveChangesAsync();
             var authorResponse = _mapper.Map<AuthorResponse>(updateAuthor);
             return ApiResponse<AuthorResponse>.SuccessResponse("Thay đổi thông tin tác giả thành công", 200, authorResponse);
+        }
+
+        public async Task<List<Author>> findAuthor(FindAuthorInputDto dto)
+        {
+            var user = await _account.AuthenticationAsync(dto.token);
+            var role = await _account.UserRoleCheck(dto.token);
+
+            if (user == null || role != 0) return null!;
+
+            var authors = await _context.Authors.Where(x => x.NameAuthor == dto.nameAuthor).ToListAsync();
+            return authors;
         }
     }
 }

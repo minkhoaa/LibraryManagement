@@ -94,9 +94,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 var emailConfig = builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>();
 
-
-
-
 // Life cycle DI
 builder.Services.AddScoped<IReaderRepository, ReaderRepository>();
 builder.Services.AddScoped<IAuthenRepository, AuthenRepository>();
@@ -109,6 +106,18 @@ builder.Services.AddScoped<ITypeBookRepository, TypeBookRepository>();
 builder.Services.AddScoped<IBookReceiptRepository, BookReceiptRepository>();
 builder.Services.AddScoped<ILoanSlipBookRepository, LoanSlipBookRepository>();
 builder.Services.AddScoped<IParameterRepository, ParameterRepository>();
+builder.Services.AddScoped<IUpLoadImageFileRepository, UpLoadImageFileRepository>();
+
+
+
+// Cấu hình up ảnh lên Cloudinary
+var account = new Account(
+    Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__CLOUDNAME"),
+    Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APIKEY"),
+    Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APISECRET")
+);
+builder.Services.AddSingleton(new Cloudinary(account));
+builder.Services.AddScoped<IUpLoadImageFileRepository, UpLoadImageFileRepository>();
 
 
 
@@ -124,7 +133,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-    app.UseSwagger();
+app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");

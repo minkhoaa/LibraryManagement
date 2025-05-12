@@ -16,15 +16,18 @@ namespace LibraryManagement.Repository
         private readonly IMapper _mapper;
         private readonly IAuthenRepository _account;
         private readonly IParameterRepository _parameterRepository;
+        private readonly IUpLoadImageFileRepository _upLoadImageFileRepository;
         public ReaderRepository(LibraryManagermentContext contex, 
                                 IMapper mapper, 
                                 IAuthenRepository authen,
-                                IParameterRepository parameterRepository)
+                                IParameterRepository parameterRepository,
+                                IUpLoadImageFileRepository upLoadImageFileRepository)
         {
             _account = authen;
             _context = contex;
             _mapper = mapper;
             _parameterRepository = parameterRepository;
+            _upLoadImageFileRepository = upLoadImageFileRepository;
         }
 
         // Hàm tạo Id độc giả
@@ -44,6 +47,7 @@ namespace LibraryManagement.Repository
             }
             return $"rd{nextNumber:D5}";
         }
+
         // Hàm thêm độc giả
         public async Task<ApiResponse<ReaderResponse>> addReaderAsync(ReaderCreationRequest request)
         {
@@ -59,6 +63,13 @@ namespace LibraryManagement.Repository
                 return ApiResponse<ReaderResponse>.FailResponse($"Tuổi độc giả phải từ {minAge} đến {maxAge} tuổi", 400);
             }
 
+            // Chuỗi url ảnh từ cloudinary
+            string imageUrl = null;
+            if (request.AvatarImage != null)
+            {
+                imageUrl = await _upLoadImageFileRepository.UploadImageAsync(request.AvatarImage);
+            }
+
             var newReader = _mapper.Map<Reader>(request);
 
             newReader.IdReader = await generateNextIdReaderAsync();
@@ -70,7 +81,20 @@ namespace LibraryManagement.Repository
             _context.Readers.Add(newReader);
             await _context.SaveChangesAsync();
 
+            // Lưu avatar vào bảng image nếu có
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                var image = new Image
+                {
+                    IdReader = newReader.IdReader,
+                    Url = imageUrl,
+                };
+                _context.Images.Add(image);
+                await _context.SaveChangesAsync();
+            }
+
             var readerResponse = _mapper.Map<ReaderResponse>(newReader);
+            readerResponse.UrlAvatar = imageUrl;
             return ApiResponse<ReaderResponse>.SuccessResponse("Thêm độc giả thành công", 201, readerResponse);
         }
 

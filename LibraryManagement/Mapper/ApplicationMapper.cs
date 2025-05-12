@@ -10,27 +10,18 @@ namespace LibraryManagement.Mapper
         public ApplicationMapper()
         {
             // Mapper Reader
-            CreateMap<ReaderRequest, Reader>();
+            CreateMap<ReaderCreationRequest, Reader>()
+            .ForMember(dest => dest.Dob, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.Dob, DateTimeKind.Utc)));
             CreateMap<Reader, ReaderResponse>();
             CreateMap<ReaderUpdateRequest, Reader>()
                 .ForMember(dest => dest.ReaderPassword, opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.ReaderPassword)))
-                .ForMember(dest => dest.CreateDate, opt => opt.Ignore());
+                .ForMember(dest => dest.CreateDate, opt => opt.Ignore())
+                .ForMember(dest => dest.Dob, opt => opt.Ignore());
+
 
             // Mapper Author
             CreateMap<AuthorRequest, Author>();
             CreateMap<Author, AuthorResponse>();
-
-            // Mapper HeaderBook
-            CreateMap<HeaderBookRequest, HeaderBook>();
-            CreateMap<HeaderBook, HeaderBookResponse>();
-
-            // Mapper Book
-            CreateMap<BookRequest, Book>();
-            CreateMap<Book, BookResponse>();
-
-            // Mapper TheBook
-            CreateMap<TheBookRequest, TheBook>();
-            CreateMap<TheBook, TheBookResponse>();
 
             // Mapper TypeReader
             CreateMap<TypeReaderRequest, TypeReader>();
@@ -43,6 +34,10 @@ namespace LibraryManagement.Mapper
             // Mapper Role
             CreateMap<RoleRequest, Role>();
             CreateMap<Role, RoleResponse>();
+
+            // Mapper Parameter
+            CreateMap<ParameterRequest, Parameter>();
+            CreateMap<Parameter, ParameterResponse>();
         }
     }
 }

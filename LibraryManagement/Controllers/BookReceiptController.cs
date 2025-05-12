@@ -1,5 +1,4 @@
 ﻿using LibraryManagement.Dto.Request;
-using LibraryManagement.Repository;
 using LibraryManagement.Repository.InterFace;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +17,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint thêm phiếu nhập sách
         [HttpPost("add_bookreceipt")]
-        public async Task<IActionResult> addBookReceipt(BookReceiptRequest request)
+        public async Task<IActionResult> addBookReceipt([FromBody] BookReceiptRequest request)
         {
             var result = await _bookReceiptRepository.addBookReceiptAsync(request);
             if (result.Success)
@@ -26,7 +25,7 @@ namespace LibraryManagement.Controllers
             else return BadRequest(result);
         }
 
-        // Endpoint xóa đầu sách
+        // Endpoint xóa phiếu nhập sách
         [HttpDelete("delete_bookreceipt/{idBookReceipt}")]
         public async Task<IActionResult> deleteBookReceipt(Guid idBookReceipt)
         {

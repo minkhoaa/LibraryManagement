@@ -6,8 +6,8 @@
         public string Sex { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
+        public DateTime Dob { get; set; }
         public string Phone { get; set; }
-        public string ReaderUsername { get; set; }
         public string ReaderPassword { get; set; }
     }
 }

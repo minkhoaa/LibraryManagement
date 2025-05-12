@@ -103,12 +103,12 @@ builder.Services.AddScoped<IAuthenRepository, AuthenRepository>();
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
-builder.Services.AddScoped<IHeaderBookRepository, HeaderBookRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<ITheBookRepository, TheBookRepository>();
 builder.Services.AddScoped<ITypeReaderRepository, TypeReaderRepository>();
 builder.Services.AddScoped<ITypeBookRepository, TypeBookRepository>();
 builder.Services.AddScoped<IBookReceiptRepository, BookReceiptRepository>();
+builder.Services.AddScoped<ILoanSlipBookRepository, LoanSlipBookRepository>();
+builder.Services.AddScoped<IParameterRepository, ParameterRepository>();
 
 
 

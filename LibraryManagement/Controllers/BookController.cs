@@ -1,6 +1,5 @@
 ﻿using LibraryManagement.Dto.Request;
 using LibraryManagement.Repository.InterFace;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagement.Controllers
@@ -16,24 +15,9 @@ namespace LibraryManagement.Controllers
             _bookRepository = bookRepository;
         }
 
-
-        // Endpoint lấy danh sách sách
-        [HttpGet("list_book")]
-        public async Task<IActionResult> getListBook()
-        {
-            try
-            {
-                return Ok(await _bookRepository.getListBook());
-            }
-            catch
-            {
-                return BadRequest();
-            }
-        }
-
-        // Endpoint thêm sách
+        // Endpoint tạo sách
         [HttpPost("add_book")]
-        public async Task<IActionResult> addBook(BookRequest request)
+        public async Task<IActionResult> addHeaderBook([FromBody] HeaderBookCreationRequest request)
         {
             var result = await _bookRepository.addBookAsync(request);
             if (result.Success)
@@ -41,21 +25,23 @@ namespace LibraryManagement.Controllers
             return BadRequest(result);
         }
 
-        // Endpoint sửa sách
-        [HttpPut("update_book/{idBook}")]
-        public async Task<IActionResult> updateBook(BookRequest request, string idBook)
+        // Endpoint xóa sách
+        [HttpDelete("delete_book/{idBook}/{idTheBook}")]
+        public async Task<IActionResult> deleteHeaderBook(string idBook)
         {
-            var result = await _bookRepository.updateBookAsync(request, idBook);
+            var result = await _bookRepository.deleteBookAsync(idBook);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
         }
 
-        // Endpoint xóa sách
-        [HttpDelete("delete_book/{idBook}")]
-        public async Task<IActionResult> deleteBook(string idBook)
+        // Endpoint sửa sách
+        [HttpPut("update_book/{idBook}/{idTheBook}")]
+        public async Task<IActionResult> updateHeaderBook([FromBody] HeaderBookUpdateRequest request, 
+                                                          string idBook, 
+                                                          string idTheBook)
         {
-            var result = await _bookRepository.deleteBookAsync(idBook);
+            var result = await _bookRepository.updateBookAsync(request, idBook, idTheBook);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);

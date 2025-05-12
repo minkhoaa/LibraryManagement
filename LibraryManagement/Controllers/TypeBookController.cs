@@ -17,7 +17,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint thêm loại sách
         [HttpPost("add_typebook")]
-        public async Task<IActionResult> addTypeBook(TypeBookRequest request)
+        public async Task<IActionResult> addTypeBook([FromBody] TypeBookRequest request)
         {
             var result = await _typeBookRepository.addTypeBookAsync(request);
             if (result.Success)
@@ -27,7 +27,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint sửa loại sách
         [HttpPut("update_typebook/{idTypeBook}")]
-        public async Task<IActionResult> updateTypeBook(TypeBookRequest request, Guid idTypeBook)
+        public async Task<IActionResult> updateTypeBook([FromBody] TypeBookRequest request, Guid idTypeBook)
         {
             var result = await _typeBookRepository.updateTypeBookAsync(request, idTypeBook);
             if (result.Success)

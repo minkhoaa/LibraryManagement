@@ -2,9 +2,8 @@
 {
     public class BookReceiptRequest
     {
-        public HeaderBookRequest headerBook { get; set; }
-        public BookRequest book { get; set; }
-        public Guid IdReader { get; set; }
+        public HeaderBookCreationRequest headerBook { get; set; }
+        public string IdReader { get; set; }
         public List<DetailBookReceiptRequest> listDetailsRequest { get; set; }
     }
 

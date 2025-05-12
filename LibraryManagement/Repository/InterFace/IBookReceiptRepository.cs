@@ -10,5 +10,7 @@ namespace LibraryManagement.Repository.InterFace
         Task<ApiResponse<BooKReceiptResponse>> updateBookReceiptAsync(BookReceiptRequest request, Guid idBookReipt);
 
         Task<ApiResponse<string>> deleteBookReceiptAsync(Guid idBookReipt);
+        public Task<string> generateNextIdBookAsync();
+        public Task<string> generateNextIdTheBookAsync();
      }
 }

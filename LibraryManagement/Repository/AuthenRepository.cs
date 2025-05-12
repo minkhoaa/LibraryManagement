@@ -23,9 +23,8 @@ namespace LibraryManagement.Repository
         private readonly IMapper _mapper;
         private readonly IFluentEmail _fluentEmail;
         private readonly IConfiguration _configuration;
-        private readonly IMemoryCache _tempOtp; 
-
-
+        private readonly IMemoryCache _tempOtp;
+        private readonly IReaderRepository _readerRepository;
 
         private static readonly Guid DefaultTypeReaderId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6");
 
@@ -55,9 +54,6 @@ namespace LibraryManagement.Repository
             };
         }
 
-
-
-
         // Hàm đăng ký
         public async Task<bool> SignUpWithOtpAsync(ConfirmOtp confirmOtp)
         {
@@ -80,6 +76,7 @@ namespace LibraryManagement.Repository
 
             var reader = new Reader
             {
+                IdReader = await _readerRepository.generateNextIdReaderAsync(),
                 ReaderUsername = confirmOtp.Email,
                 ReaderPassword = BCrypt.Net.BCrypt.HashPassword(cacheData.Password),
                 IdTypeReader = DefaultTypeReaderId,

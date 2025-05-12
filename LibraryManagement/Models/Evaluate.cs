@@ -8,7 +8,7 @@ namespace LibraryManagement.Models
     {
         [Key]
         public Guid IdEvaluate { get; set; }
-        public Guid IdReader { get; set; }
+        public string IdReader { get; set; }
         public Guid IdHeaderBook { get; set; }
         public string EvaComment { get; set; }
         public int EvaStar { get; set; }

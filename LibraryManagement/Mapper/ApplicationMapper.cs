@@ -10,11 +10,14 @@ namespace LibraryManagement.Mapper
         public ApplicationMapper()
         {
             // Mapper Reader
-            CreateMap<ReaderRequest, Reader>();
+            CreateMap<ReaderCreationRequest, Reader>()
+            .ForMember(dest => dest.Dob, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.Dob, DateTimeKind.Utc)));
             CreateMap<Reader, ReaderResponse>();
             CreateMap<ReaderUpdateRequest, Reader>()
                 .ForMember(dest => dest.ReaderPassword, opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.ReaderPassword)))
-                .ForMember(dest => dest.CreateDate, opt => opt.Ignore());
+                .ForMember(dest => dest.CreateDate, opt => opt.Ignore())
+                .ForMember(dest => dest.Dob, opt => opt.Ignore());
+
 
             // Mapper Author
             CreateMap<AuthorRequest, Author>();

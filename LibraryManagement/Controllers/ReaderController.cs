@@ -27,7 +27,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint thêm độc giả
         [HttpPost("add_reader")]
-        public async Task<IActionResult> addNewReader([FromBody]ReaderRequest request)
+        public async Task<IActionResult> addNewReader([FromBody]ReaderCreationRequest request)
         {
             var result = await _readerRepository.addReaderAsync(request);
             if (result.Success)
@@ -37,7 +37,7 @@ namespace LibraryManagement.Controllers
 
         // Endpont sửa độc giả
         [HttpPut("update_reader/{idReader}")]
-        public async Task<IActionResult> updateReader(ReaderUpdateRequest request, Guid idReader)
+        public async Task<IActionResult> updateReader(ReaderUpdateRequest request, string idReader)
         {
             var result = await _readerRepository.updateReaderAsync(request, idReader);
             if (result.Success)
@@ -47,7 +47,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint xóa độc giả
         [HttpDelete("delete_reader/{idReader}")]
-        public async Task<IActionResult> deleteReader(Guid idReader)
+        public async Task<IActionResult> deleteReader(string idReader)
         {
             var result = await _readerRepository.deleteReaderAsync(idReader);
             if (result.Success)

@@ -1,6 +1,4 @@
-﻿using LibraryManagement.Models;
-
-namespace LibraryManagement.Dto.Response
+﻿namespace LibraryManagement.Dto.Response
 {
     public class ReaderResponse
     {
@@ -9,6 +7,7 @@ namespace LibraryManagement.Dto.Response
         public string Sex { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
+        public DateTime Dob { get; set; }
         public string Phone { get; set; }
         public DateTime CreateDate { get; set; }
         public string ReaderAccount { get; set; }

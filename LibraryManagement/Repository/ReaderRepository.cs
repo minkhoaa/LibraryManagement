@@ -6,6 +6,7 @@ using LibraryManagement.Helpers;
 using LibraryManagement.Models;
 using LibraryManagement.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace LibraryManagement.Repository
 {
@@ -23,10 +24,29 @@ namespace LibraryManagement.Repository
             _mapper = mapper;
         }
 
+        // Hàm tạo Id độc giả
+        public async Task<string> generateNextIdReaderAsync()
+        {
+            var nextID = await _context.Readers.OrderByDescending(id => id.IdReader).FirstOrDefaultAsync();
+
+            int nextNumber = 1;
+
+            if (nextID != null && nextID.IdReader.StartsWith("rd"))
+            {
+                string numberPart = nextID.IdReader.Substring(2);
+                if (int.TryParse(numberPart, out int parsed))
+                {
+                    nextNumber = parsed + 1;
+                }
+            }
+            return $"rd{nextNumber:D5}";
+        }
         // Hàm thêm độc giả
-        public async Task<ApiResponse<ReaderResponse>> addReaderAsync(ReaderRequest request)
+        public async Task<ApiResponse<ReaderResponse>> addReaderAsync(ReaderCreationRequest request)
         {
             var newReader = _mapper.Map<Reader>(request);
+            newReader.IdReader = await generateNextIdReaderAsync();
+            newReader.ReaderUsername = request.Email;
             newReader.ReaderPassword = BCrypt.Net.BCrypt.HashPassword(request.ReaderPassword);
             newReader.RoleName = AppRoles.Reader;
             _context.Readers.Add(newReader);
@@ -51,7 +71,7 @@ namespace LibraryManagement.Repository
         }
 
         // Hàm sửa độc giả
-        public async Task<ApiResponse<ReaderResponse>> updateReaderAsync(ReaderUpdateRequest request, Guid idReader)
+        public async Task<ApiResponse<ReaderResponse>> updateReaderAsync(ReaderUpdateRequest request, string idReader)
         {
             var updateReader = await _context.Readers.FirstOrDefaultAsync(reader => reader.IdReader == idReader);
             if (updateReader == null)
@@ -59,15 +79,15 @@ namespace LibraryManagement.Repository
                 return ApiResponse<ReaderResponse>.FailResponse("Không tìm thấy độc giả", 404);
             }
             _mapper.Map(request, updateReader);
-
-            _context.Readers.Update(updateReader);
+            updateReader.Dob = DateTime.SpecifyKind(request.Dob, DateTimeKind.Utc);
+            updateReader.ReaderUsername = request.Email;
             await _context.SaveChangesAsync();
             var readerResponse = _mapper.Map<ReaderResponse>(updateReader);
             return ApiResponse<ReaderResponse>.SuccessResponse("Thay đổi thông tin độc giả thành công", 200, readerResponse);
         }
 
         // Hàm xóa độc giả
-        public async Task<ApiResponse<string>> deleteReaderAsync(Guid idReader)
+        public async Task<ApiResponse<string>> deleteReaderAsync(string idReader)
         {
             var deleteReader = await _context.Readers.FirstOrDefaultAsync(reader => reader.IdReader == idReader);
             if (deleteReader == null)

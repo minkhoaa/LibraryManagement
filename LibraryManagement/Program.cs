@@ -107,6 +107,8 @@ builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<ITypeReaderRepository, TypeReaderRepository>();
 builder.Services.AddScoped<ITypeBookRepository, TypeBookRepository>();
 builder.Services.AddScoped<IBookReceiptRepository, BookReceiptRepository>();
+builder.Services.AddScoped<ILoanSlipBookRepository, LoanSlipBookRepository>();
+builder.Services.AddScoped<IParameterRepository, ParameterRepository>();
 
 
 

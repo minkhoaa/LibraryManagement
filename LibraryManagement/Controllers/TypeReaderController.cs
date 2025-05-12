@@ -17,7 +17,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint thêm loại độc giả
         [HttpPost("add_typereader")]
-        public async Task<IActionResult> addTypeReader(TypeReaderRequest request)
+        public async Task<IActionResult> addTypeReader([FromBody] TypeReaderRequest request)
         {
             var result = await _typeReaderRepository.addTypeReaderAsync(request);
             if (result.Success)
@@ -27,7 +27,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint sửa loại độc giả
         [HttpPut("update_typereader/{idTypeReader}")]
-        public async Task<IActionResult> updateTypeReader(TypeReaderRequest request, Guid idTypeReader)
+        public async Task<IActionResult> updateTypeReader([FromBody] TypeReaderRequest request, Guid idTypeReader)
         {
             var result = await _typeReaderRepository.updateTypeReaderAsync(request, idTypeReader);
             if (result.Success)

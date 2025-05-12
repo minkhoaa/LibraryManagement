@@ -4,9 +4,9 @@ using LibraryManagement.Dto.Request;
 using LibraryManagement.Dto.Response;
 using LibraryManagement.Helpers;
 using LibraryManagement.Models;
+using LibraryManagement.Repository.InterFace;
 using LibraryManagement.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace LibraryManagement.Repository
 {
@@ -14,14 +14,18 @@ namespace LibraryManagement.Repository
     {
         private readonly LibraryManagermentContext _context;
         private readonly IMapper _mapper;
+        private readonly IAuthenRepository _account;
+        private readonly IParameterRepository _parameterRepository;
 
-        private readonly IAuthenRepository _account; 
-
-        public ReaderRepository(LibraryManagermentContext contex, IMapper mapper, IAuthenRepository authen)
+        public ReaderRepository(LibraryManagermentContext contex, 
+                                IMapper mapper, 
+                                IAuthenRepository authen,
+                                IParameterRepository parameterRepository)
         {
             _account = authen;
             _context = contex;
             _mapper = mapper;
+            _parameterRepository = parameterRepository;
         }
 
         // Hàm tạo Id độc giả
@@ -44,11 +48,26 @@ namespace LibraryManagement.Repository
         // Hàm thêm độc giả
         public async Task<ApiResponse<ReaderResponse>> addReaderAsync(ReaderCreationRequest request)
         {
+            // Quy định tuổi độc giả
+            int readerAge = DateTime.Now.Year - request.Dob.Year;
+            if (request.Dob.Date > DateTime.Now.AddYears(-readerAge)) // Kiểm đã qua sinh nhật hay chưa
+                readerAge--;
+
+            int minAge = await _parameterRepository.getValueAsync("MinReaderAge");
+            int maxAge = await _parameterRepository.getValueAsync("MaxReaderAge");
+            if(readerAge < minAge || readerAge > maxAge) // Kiểm tra tuổi độc giả
+            {
+                return ApiResponse<ReaderResponse>.FailResponse($"Tuổi độc giả phải từ {minAge} đến {maxAge} tuổi", 400);
+            }
+
             var newReader = _mapper.Map<Reader>(request);
+
             newReader.IdReader = await generateNextIdReaderAsync();
             newReader.ReaderUsername = request.Email;
+            newReader.ExpiryDate = newReader.CreateDate.AddMonths(6);
             newReader.ReaderPassword = BCrypt.Net.BCrypt.HashPassword(request.ReaderPassword);
             newReader.RoleName = AppRoles.Reader;
+
             _context.Readers.Add(newReader);
             await _context.SaveChangesAsync();
 
@@ -78,6 +97,18 @@ namespace LibraryManagement.Repository
             {
                 return ApiResponse<ReaderResponse>.FailResponse("Không tìm thấy độc giả", 404);
             }
+            // Quy định tuổi độc giả
+            int readerAge = DateTime.Now.Year - request.Dob.Year;
+            if (request.Dob.Date > DateTime.Now.AddYears(-readerAge)) // Kiểm đã qua sinh nhật hay chưa
+                readerAge--;
+
+            int minAge = await _parameterRepository.getValueAsync("MinReaderAge");
+            int maxAge = await _parameterRepository.getValueAsync("MaxReaderAge");
+            if (readerAge < minAge || readerAge > maxAge) // Kiểm tra tuổi độc giả
+            {
+                return ApiResponse<ReaderResponse>.FailResponse($"Tuổi độc giả phải từ {minAge} đến {maxAge} tuổi", 400);
+            }
+
             _mapper.Map(request, updateReader);
             updateReader.Dob = DateTime.SpecifyKind(request.Dob, DateTimeKind.Utc);
             updateReader.ReaderUsername = request.Email;
@@ -115,7 +146,6 @@ namespace LibraryManagement.Repository
             }
             ).FirstOrDefaultAsync();
             return listReader!;
-
         }
     }
 }

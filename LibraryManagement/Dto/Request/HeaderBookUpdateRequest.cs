@@ -7,6 +7,7 @@
         public string NameHeaderBook { get; set; }
         public string DescribeBook { get; set; }
         public List<Guid> IdAuthors { get; set; }
+        public IFormFile BookImage { get; set; }
         public BookUpdateRequest bookUpdateRequest { get; set; }
         public TheBookUpdateRequest theBookUpdateRequest { get; set; }
 

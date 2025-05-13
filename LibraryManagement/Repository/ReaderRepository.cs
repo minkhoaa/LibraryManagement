@@ -132,11 +132,37 @@ namespace LibraryManagement.Repository
                 return ApiResponse<ReaderResponse>.FailResponse($"Tuổi độc giả phải từ {minAge} đến {maxAge} tuổi", 400);
             }
 
+            // Chuỗi url ảnh từ cloudinary
+            string imageUrl = null;
+            if (request.AvatarImage != null)
+            {
+                imageUrl = await _upLoadImageFileRepository.UploadImageAsync(request.AvatarImage);
+            }
+
             _mapper.Map(request, updateReader);
             updateReader.Dob = DateTime.SpecifyKind(request.Dob, DateTimeKind.Utc);
             updateReader.ReaderUsername = request.Email;
             await _context.SaveChangesAsync();
+
+            // Kiểm tra độc giả có avt chưa
+            var existingAvatar = await _context.Images.FirstOrDefaultAsync(av => av.IdReader == updateReader.IdReader);
+            if (existingAvatar != null)
+            {
+                existingAvatar.Url = imageUrl;
+                _context.Images.Update(existingAvatar);
+            } else // Chưa có
+            {
+                var image = new Image
+                {
+                    IdReader = updateReader.IdReader,
+                    Url = imageUrl,
+                };
+                _context.Images.Update(image);
+            }
+            await _context.SaveChangesAsync();
+
             var readerResponse = _mapper.Map<ReaderResponse>(updateReader);
+            readerResponse.UrlAvatar = imageUrl;
             return ApiResponse<ReaderResponse>.SuccessResponse("Thay đổi thông tin độc giả thành công", 200, readerResponse);
         }
 

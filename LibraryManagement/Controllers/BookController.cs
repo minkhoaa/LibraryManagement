@@ -17,7 +17,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint tạo sách
         [HttpPost("add_book")]
-        public async Task<IActionResult> addHeaderBook([FromBody] HeaderBookCreationRequest request)
+        public async Task<IActionResult> addHeaderBook([FromForm] HeaderBookCreationRequest request)
         {
             var result = await _bookRepository.addBookAsync(request);
             if (result.Success)
@@ -37,7 +37,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint sửa sách
         [HttpPut("update_book/{idBook}/{idTheBook}")]
-        public async Task<IActionResult> updateHeaderBook([FromBody] HeaderBookUpdateRequest request, 
+        public async Task<IActionResult> updateHeaderBook([FromForm] HeaderBookUpdateRequest request, 
                                                           string idBook, 
                                                           string idTheBook)
         {

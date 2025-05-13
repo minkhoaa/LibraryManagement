@@ -13,20 +13,35 @@ namespace LibraryManagement.Repository
     {
         private readonly LibraryManagermentContext _context;
         private readonly IBookReceiptRepository _bookReceiptRepository;
+        private readonly IUpLoadImageFileRepository _upLoadImageFileRepository;
+        private readonly IParameterRepository _parameterRepository;
 
         public BookRepository(LibraryManagermentContext context, 
                               IMapper mapper, 
-                              IBookReceiptRepository bookReceiptRepository)
+                              IBookReceiptRepository bookReceiptRepository,
+                              IUpLoadImageFileRepository upLoadImageFileRepository,
+                              IParameterRepository parameterRepository)
         {
             _context = context;
             _bookReceiptRepository = bookReceiptRepository;
+            _upLoadImageFileRepository = upLoadImageFileRepository;
+            _parameterRepository = parameterRepository;
         }
 
         // Hàm thêm mới đầu sách
         public async Task<ApiResponse<HeaderBookResponse>> addBookAsync(HeaderBookCreationRequest request)
         {
+            // Quy định khoảng cách năm xuất bản
+            int publishBookGap = DateTime.Now.Year - request.bookCreateRequest.ReprintYear;
+            int publishGap = await _parameterRepository.getValueAsync("PublishGap");
+            if (publishBookGap > publishGap)
+            {
+                return ApiResponse<HeaderBookResponse>.FailResponse($"Khoảng cách năm xuất bản phải nhỏ hơn {publishGap}", 400);
+            }
+
             var headerBook = await _context.HeaderBooks.FirstOrDefaultAsync(hb => hb.NameHeaderBook == request.NameHeaderBook);
             // Tạo đầu sách
+            string imageUrl = null;
             if (headerBook == null)
             {
                 headerBook = new HeaderBook
@@ -59,6 +74,11 @@ namespace LibraryManagement.Repository
             }
 
             // Tạo sách
+            // Chuỗi url ảnh từ cloudinary
+            if (request.BookImage != null)
+            {
+                imageUrl = await _upLoadImageFileRepository.UploadImageAsync(request.BookImage);
+            }
             var book = new Book
             {
                 IdBook = await _bookReceiptRepository.generateNextIdBookAsync(),
@@ -69,7 +89,18 @@ namespace LibraryManagement.Repository
             };
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
-      
+            // Lưu ảnh sách vào bảng image nếu có
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                var image = new Image
+                {
+                    IdBook = book.IdBook,
+                    Url = imageUrl,
+                };
+                _context.Images.Add(image);
+                await _context.SaveChangesAsync();
+            }
+
             // Tạo cuốn sách
             var theBook = new TheBook
             {
@@ -87,6 +118,7 @@ namespace LibraryManagement.Repository
                 NameHeaderBook = headerBook.NameHeaderBook,
                 DescribeBook = headerBook.DescribeBook,
                 IdAuthors = request.IdAuthors,
+                BookImage = imageUrl,
 
                 bookResponse = new BookResponse
                 {

@@ -6,6 +6,7 @@
         public string NameHeaderBook { get; set; }
         public string DescribeBook { get; set; }
         public List<Guid> IdAuthors { get; set; }
+        public string BookImage { get; set; }
         public BookResponse bookResponse { get; set; }
         public TheBookResponse thebookReponse { get; set; }
 

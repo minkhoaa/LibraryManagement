@@ -1,7 +1,9 @@
 ﻿using LibraryManagement.Dto.Request;
 using LibraryManagement.Repository.InterFace;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Validations;
 using Microsoft.VisualBasic;
+using System.Runtime.CompilerServices;
 
 namespace LibraryManagement.Controllers
 {
@@ -76,6 +78,22 @@ namespace LibraryManagement.Controllers
             var result = await _bookRepository.getAllHeaderbookandComments(token);
             if (result == null) return Unauthorized("Vui lòng đăng nhập");
             return Ok(result); 
+        }
+
+        [HttpPost("getLikedHeaderbook")]
+        public async Task<IActionResult> getLikeHeaderBook([FromBody] string token)
+        {
+            var result = await _bookRepository.getLikedHeaderBook(token);
+            if (result == null) return Unauthorized("Vui lòng đăng nhập");
+            return Ok(result); 
+
+        }
+        [HttpDelete("deleteEvaluation")]
+        public async Task<IActionResult> deleteEvaluation([FromBody]DeleteEvaluationInput dto)
+        {
+            var user = await _bookRepository.DeleteEvaluation(dto);
+            if (user == false) return Unauthorized();
+            return Ok("Xóa thành công"); 
         }
     }
 }

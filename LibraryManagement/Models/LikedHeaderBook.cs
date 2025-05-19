@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Xml;
 
 namespace LibraryManagement.Models
 {
@@ -13,5 +14,10 @@ namespace LibraryManagement.Models
 
         [Column(name:"liked_day")]
         public DateTime LikedDay { get; set; }
+
+        [ForeignKey("IdHeaderBook")]
+        public HeaderBook headerBook { get; set; }
+        [ForeignKey("IdReader")]
+        public Reader reader { get; set; }
     }
 }

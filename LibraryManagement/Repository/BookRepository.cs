@@ -374,5 +374,57 @@ namespace LibraryManagement.Repository
                 return true;
             }
         }
+
+        public async Task<List<HeadbookAndComments>> getLikedHeaderBook(string token)
+        {
+            var user = await _authen.AuthenticationAsync(token);
+            if (user == null) return null!;
+
+            var likedPost = await _context.LikedHeaderBooks
+                .Where(x => x.IdReader == user.IdReader)
+                .Join(_context.HeaderBooks,
+                lhb => lhb.IdHeaderBook,
+                hd => hd.IdHeaderBook,
+                (lhb, hd) => new { lhb, hd })
+                .Join(_context.Readers,
+                rd => rd.lhb.IdReader,
+                r => r.IdReader,
+                (rd, r) => new
+                {
+                    rd.lhb,
+                    rd.hd,
+                    Reader = r
+                }
+                ).Select(a => new HeadbookAndComments
+                {
+                    idHeaderBook = a.hd.IdHeaderBook.ToString(),
+                    nameHeaderBook = a.hd.NameHeaderBook,
+                    describe = a.hd.DescribeBook,
+                    isLiked = _context.LikedHeaderBooks.Any(g => g.IdReader == user.IdReader && g.IdHeaderBook == a.hd.IdHeaderBook),
+                    Evaluations = _context.Evaluates.Where(j => j.IdHeaderBook == a.hd.IdHeaderBook).Select(k =>
+                           new EvaluationDetails
+                           {
+                               IdEvaluation = k.IdEvaluate,
+                               IdReader = k.IdReader,
+                               Comment = k.EvaComment,
+                               Rating = k.EvaStar,
+                               Create_Date = k.CreateDate
+                           }
+                        ).ToList()
+                }).ToListAsync();
+            return likedPost;
+        }
+
+        public async Task<bool> DeleteEvaluation(DeleteEvaluationInput dto)
+        {
+            var user = await _authen.AuthenticationAsync(dto.token);
+            if (user == null) return false;
+            var evaluation = await _context.Evaluates.FirstOrDefaultAsync(x => x.IdEvaluate == dto.IdValuation);
+            if (evaluation == null) return false; 
+            _context.Evaluates.Remove(evaluation);
+            await _context.SaveChangesAsync();
+            return true; 
+
+        }
     }
 }

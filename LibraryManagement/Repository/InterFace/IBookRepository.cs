@@ -4,6 +4,8 @@ using LibraryManagement.Helpers;
 
 using LibraryManagement.Models;
 using Microsoft.Extensions.Primitives;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 
 
 namespace LibraryManagement.Repository.InterFace
@@ -25,5 +27,12 @@ namespace LibraryManagement.Repository.InterFace
         public Task<List<EvaluationDetails>> getBooksEvaluation(EvaluationDetailInput dto);
 
         public Task<bool> LikeHeaderBook(EvaluationDetailInput dto);
+
+        public Task<List<HeadbookAndComments>> getLikedHeaderBook(string token);
+
+        public Task<bool> DeleteEvaluation(DeleteEvaluationInput dto);
+
+
+      
     } 
 }

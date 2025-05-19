@@ -23,6 +23,8 @@ namespace LibraryManagement.Models
 
         public DateTime CreateDate { get; set; }
 
+        [ForeignKey("IdReader")]
+
         public Reader Reader { get; set; }
         [ForeignKey("IdHeaderBook")]
         public HeaderBook HeaderBook { get; set; }

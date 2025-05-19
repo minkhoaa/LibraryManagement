@@ -264,9 +264,10 @@ namespace LibraryManagement.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<List<HeadbookAndComments>> getHeaderbookandComments()
+        public async Task<List<HeadbookAndComments>> getHeaderbookandComments(string name_headerBook)
         {
             var books = await _context.HeaderBooks
+                .Where(c => c.NameHeaderBook == name_headerBook)
                 .GroupJoin(
                     _context.Evaluates,
                     ad => ad.IdHeaderBook,
@@ -274,9 +275,18 @@ namespace LibraryManagement.Repository
                     (ad, hd) => new HeadbookAndComments
                     {
                         idHeaderBook = ad.IdHeaderBook.ToString(),
-                        id_Evaluate = hd.Select(e => e.IdEvaluate.ToString()).ToList()
-                    }
-                ).ToListAsync();
+                        nameHeaderBook = ad.NameHeaderBook, 
+                        describe = ad.DescribeBook, 
+                        Evaluations = _context.Evaluates.Where(a => a.IdHeaderBook == ad.IdHeaderBook).Select(k =>
+                            new EvaluationDetails
+                            {
+                                IdEvaluation = k.IdEvaluate.ToString(),
+                                Comment = k.EvaComment,
+                                Rating = k.EvaStar
+                            }
+                        ).ToList()
+                    }).ToListAsync();
+
             return books;
         }
     }

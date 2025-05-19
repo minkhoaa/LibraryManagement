@@ -18,6 +18,6 @@ namespace LibraryManagement.Repository.InterFace
 
         public Task<BookResponse> findPost(string name_book);
 
-        public Task<List<HeadbookAndComments>> getHeaderbookandComments();
+        public Task<List<HeadbookAndComments>> getHeaderbookandComments(string name_headerbook);
     }
 }

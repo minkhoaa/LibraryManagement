@@ -49,9 +49,9 @@ namespace LibraryManagement.Controllers
         }
 
         [HttpGet("getBookAndComments")]
-        public async Task<IActionResult> getBooksAndComments()
+        public async Task<IActionResult> getBooksAndComments([FromBody] string name_headerBook)
         {
-            var result = await _bookRepository.getHeaderbookandComments();
+            var result = await _bookRepository.getHeaderbookandComments(name_headerBook);
             return Ok(result);
         }
 

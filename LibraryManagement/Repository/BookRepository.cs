@@ -9,6 +9,7 @@ using LibraryManagement.Repository.InterFace;
 using LibraryManagement.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using Newtonsoft.Json.Linq;
 using System.Globalization;
 
 namespace LibraryManagement.Repository
@@ -270,10 +271,12 @@ namespace LibraryManagement.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<List<HeadbookAndComments>> getHeaderbookandComments(string name_headerBook)
+        public async Task<List<HeadbookAndComments>> getHeaderbookandCommentsByid(GetHeaderBookDtoInput dto)
         {
+            var user = await _authen.AuthenticationAsync(dto.token);
+            if (user == null) return null!;
             var books = await _context.HeaderBooks
-                .Where(c => c.NameHeaderBook == name_headerBook)
+                .Where(c => c.NameHeaderBook == dto.name_headerbook)
                 .GroupJoin(
                     _context.Evaluates,
                     ad => ad.IdHeaderBook,
@@ -282,7 +285,9 @@ namespace LibraryManagement.Repository
                     {
                         idHeaderBook = ad.IdHeaderBook.ToString(),
                         nameHeaderBook = ad.NameHeaderBook, 
-                        describe = ad.DescribeBook, 
+                        describe = ad.DescribeBook,
+                        isLiked = _context.LikedHeaderBooks.Any(x => x.IdReader == user.IdReader && x.IdHeaderBook == ad.IdHeaderBook),
+
                         Evaluations = _context.Evaluates.Where(a => a.IdHeaderBook == ad.IdHeaderBook).Select(k =>
                             new EvaluationDetails
                             {
@@ -298,6 +303,35 @@ namespace LibraryManagement.Repository
             return books;
         }
 
+        public async Task<List<HeadbookAndComments>> getAllHeaderbookandComments(string token)
+        {
+            var user = await _authen.AuthenticationAsync(token);
+            if (user == null) return null!;
+            var books = await _context.HeaderBooks
+                .GroupJoin(
+                    _context.Evaluates,
+                    ad => ad.IdHeaderBook,
+                    hd => hd.IdHeaderBook,
+                    (ad, hd) => new HeadbookAndComments
+                    {
+                        idHeaderBook = ad.IdHeaderBook.ToString(),
+                        nameHeaderBook = ad.NameHeaderBook,
+                        describe = ad.DescribeBook,
+                        isLiked = _context.LikedHeaderBooks.Any(x => x.IdReader == user.IdReader && x.IdHeaderBook == ad.IdHeaderBook),
+                        Evaluations = _context.Evaluates.Where(a => a.IdHeaderBook == ad.IdHeaderBook).Select(k =>
+                            new EvaluationDetails
+                            {
+                                IdEvaluation = k.IdEvaluate,
+                                IdReader = k.IdReader,
+                                Comment = k.EvaComment,
+                                Rating = k.EvaStar,
+                                Create_Date = k.CreateDate
+                            }
+                        ).ToList()
+                    }).ToListAsync();
+
+            return books;
+        }
         public async Task<List<EvaluationDetails>> getBooksEvaluation(EvaluationDetailInput dto)
         {
             var user = await _authen.AuthenticationAsync(dto.token);

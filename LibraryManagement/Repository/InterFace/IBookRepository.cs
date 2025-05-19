@@ -18,7 +18,9 @@ namespace LibraryManagement.Repository.InterFace
 
         public Task<BookResponse> findPost(string name_book);
 
-        public Task<List<HeadbookAndComments>> getHeaderbookandComments(string name_headerbook);
+        public Task<List<HeadbookAndComments>> getHeaderbookandCommentsByid(GetHeaderBookDtoInput dto);
+
+        public  Task<List<HeadbookAndComments>> getAllHeaderbookandComments(string token);
 
         public Task<List<EvaluationDetails>> getBooksEvaluation(EvaluationDetailInput dto);
 

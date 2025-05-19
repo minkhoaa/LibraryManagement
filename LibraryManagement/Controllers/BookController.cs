@@ -48,10 +48,10 @@ namespace LibraryManagement.Controllers
             return NotFound(result);
         }
 
-        [HttpGet("getBookAndComments")]
-        public async Task<IActionResult> getBooksAndComments([FromBody] string name_headerBook)
+        [HttpPost("getBookAndComments")]
+        public async Task<IActionResult> getBooksAndComments([FromBody] GetHeaderBookDtoInput dto)
         {
-            var result = await _bookRepository.getHeaderbookandComments(name_headerBook);
+            var result = await _bookRepository.getHeaderbookandCommentsByid(dto);
             return Ok(result);
         }
         [HttpPost("getEvaluation")]
@@ -69,6 +69,13 @@ namespace LibraryManagement.Controllers
             var result = await _bookRepository.LikeHeaderBook(dto);
             if (result == false) return Unauthorized("Vui lòng đăng nhập ");
             return Ok("Success");
+        }
+        [HttpPost("getAllBooksAndComments")]
+        public async Task<IActionResult> getAllBooksAndComments([FromBody] string token)
+        {
+            var result = await _bookRepository.getAllHeaderbookandComments(token);
+            if (result == null) return Unauthorized("Vui lòng đăng nhập");
+            return Ok(result); 
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CloudinaryDotNet.Actions;
 using LibraryManagement.Data;
 using LibraryManagement.Dto.Request;
 using LibraryManagement.Dto.Response;
@@ -312,6 +313,32 @@ namespace LibraryManagement.Repository
                 Create_Date = a.CreateDate
             }).ToListAsync();
             return result;
+        }
+
+        public async Task<bool> LikeHeaderBook(EvaluationDetailInput dto)
+        {
+            var user = await _authen.AuthenticationAsync(dto.token);
+            if (user == null) return false;
+
+            var likedBook = await _context.LikedHeaderBooks.Where(x => x.IdReader == user.IdReader && x.IdHeaderBook == dto.IdHeaderBook).FirstOrDefaultAsync();
+            if (likedBook != null)
+            {
+                _context.Remove(likedBook);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                var likeBook = new LikedHeaderBook
+                {
+                    IdHeaderBook = dto.IdHeaderBook,
+                    IdReader = user.IdReader,
+                    LikedDay = DateTime.UtcNow
+                };
+                await _context.LikedHeaderBooks.AddAsync(likeBook);
+                await _context.SaveChangesAsync();
+                return true;
+            }
         }
     }
 }

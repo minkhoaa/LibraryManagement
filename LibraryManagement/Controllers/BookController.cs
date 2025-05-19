@@ -63,5 +63,12 @@ namespace LibraryManagement.Controllers
             return Ok(result);
         }
 
+        [HttpPost("LikeHeaderBook")]
+        public async Task<IActionResult> likeHeaderBook(EvaluationDetailInput dto)
+        {
+            var result = await _bookRepository.LikeHeaderBook(dto);
+            if (result == false) return Unauthorized("Vui lòng đăng nhập ");
+            return Ok("Success");
+        }
     }
 }

@@ -29,9 +29,12 @@ namespace LibraryManagement.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
 
+        public DbSet<LikedHeaderBook> LikedHeaderBooks { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Table names
+            modelBuilder.Entity<LikedHeaderBook>().ToTable("likedheaderbook");
             modelBuilder.Entity<Reader>().ToTable("reader");
             modelBuilder.Entity<TypeReader>().ToTable("typereader");
             modelBuilder.Entity<TypeBook>().ToTable("typebook");

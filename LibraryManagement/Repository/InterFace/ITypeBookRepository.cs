@@ -9,5 +9,7 @@ namespace LibraryManagement.Repository.InterFace
         public Task<ApiResponse<TypeBookResponse>> addTypeBookAsync(TypeBookRequest request);
         public Task<ApiResponse<TypeBookResponse>> updateTypeBookAsync(TypeBookRequest request, Guid idTypeBook);
         public Task<ApiResponse<string>> deleteTypeBook(Guid idTypeBook);
+
+        public Task<List<TypeBookResponseAndBook>> getTypebookAndBooks();
     }
 }

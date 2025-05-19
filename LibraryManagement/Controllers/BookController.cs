@@ -1,6 +1,7 @@
 ﻿using LibraryManagement.Dto.Request;
 using LibraryManagement.Repository.InterFace;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace LibraryManagement.Controllers
 {
@@ -46,5 +47,13 @@ namespace LibraryManagement.Controllers
                 return Ok(result);
             return NotFound(result);
         }
+
+        [HttpGet("getBookAndComments")]
+        public async Task<IActionResult> getBooksAndComments()
+        {
+            var result = await _bookRepository.getHeaderbookandComments();
+            return Ok(result);
+        }
+
     }
 }

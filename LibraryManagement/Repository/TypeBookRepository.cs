@@ -43,6 +43,23 @@ namespace LibraryManagement.Repository
             return ApiResponse<string>.SuccessResponse("Đã xóa loại sách", 200, "");
         }
 
+        public async Task<List<TypeBookResponseAndBook>> getTypebookAndBooks()
+        {
+            var result = await _context.TypeBooks
+            .Join(
+                _context.HeaderBooks,
+                hd => hd.IdTypeBook,
+                ad => ad.IdTypeBook,
+                (hd, ad) => new { TypeBook = hd, HeaderBook = ad }
+                ).Select(x => new TypeBookResponseAndBook
+                {
+                    IdHeaderBook = x.HeaderBook.IdHeaderBook.ToString(),
+                    IDTypeBook = x.TypeBook.IdTypeBook.ToString()
+                })
+                .ToListAsync();
+            return result; 
+        }
+
         // Hàm chỉnh sửa loại sách
         public async Task<ApiResponse<TypeBookResponse>> updateTypeBookAsync(TypeBookRequest request, Guid idTypeBook)
         {

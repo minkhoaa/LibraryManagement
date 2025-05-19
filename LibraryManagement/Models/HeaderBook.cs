@@ -6,7 +6,7 @@ namespace LibraryManagement.Models
     public class HeaderBook
     {
         [Key]
-        [Column("id_headerbook")]
+        [Column(name:"id_headerbook")]
         public Guid IdHeaderBook { get; set; }
 
         [Column("id_typebook")]
@@ -20,6 +20,7 @@ namespace LibraryManagement.Models
 
         [ForeignKey("IdTypeBook")]
         public TypeBook TypeBook { get; set; }
+        public ICollection<Evaluate> Evaluates { get; set; }
     }
 
 }

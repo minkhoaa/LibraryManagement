@@ -263,5 +263,21 @@ namespace LibraryManagement.Repository
         {
             throw new NotImplementedException();
         }
+
+        public async Task<List<HeadbookAndComments>> getHeaderbookandComments()
+        {
+            var books = await _context.HeaderBooks
+                .GroupJoin(
+                    _context.Evaluates,
+                    ad => ad.IdHeaderBook,
+                    hd => hd.IdHeaderBook,
+                    (ad, hd) => new HeadbookAndComments
+                    {
+                        idHeaderBook = ad.IdHeaderBook.ToString(),
+                        id_Evaluate = hd.Select(e => e.IdEvaluate.ToString()).ToList()
+                    }
+                ).ToListAsync();
+            return books;
+        }
     }
 }

@@ -44,5 +44,11 @@ namespace LibraryManagement.Controllers
                 return Ok(result);
             return NotFound(result);
         }
+        [HttpGet("getTypeBook")]
+        public async Task<IActionResult> getTypeBookAndHeader()
+        {
+            var result = await _typeBookRepository.getTypebookAndBooks();
+            return Ok(result); 
+        }
     }
 }

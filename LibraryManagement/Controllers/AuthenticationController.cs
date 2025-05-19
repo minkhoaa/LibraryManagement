@@ -22,7 +22,7 @@ namespace LibraryManagement.Controllers
         public async Task<IActionResult> SendOtpSignUp(SignUpModel request)
         {
             var result =  await _authenRepository.SendEmailConfirmation(request);
-            if (result == false) return BadRequest();
+            if (result == false) return BadRequest("Người dùng này đã tồn tại");
             return Ok(); 
         }
 
@@ -32,7 +32,7 @@ namespace LibraryManagement.Controllers
         {
             var result = await _authenRepository.SignUpWithOtpAsync(confirmOtp);
             if (result == false) return BadRequest();
-            return Ok();
+            return Ok("Đăng kí thành công");
         }
         // Endpoint đăng nhập
         [HttpPost("SignIn")]   

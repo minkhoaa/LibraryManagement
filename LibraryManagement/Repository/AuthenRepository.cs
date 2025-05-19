@@ -117,7 +117,7 @@ namespace LibraryManagement.Repository
             var user = await _context.Readers.FirstOrDefaultAsync(x => x.ReaderUsername == signup.Email);
             if (user != null)
             {
-                throw new Exception("Người dùng đã tồn tại");
+                return false; 
             }
             try
             {

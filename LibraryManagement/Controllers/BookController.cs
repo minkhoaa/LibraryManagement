@@ -54,6 +54,14 @@ namespace LibraryManagement.Controllers
             var result = await _bookRepository.getHeaderbookandComments(name_headerBook);
             return Ok(result);
         }
+        [HttpPost("getEvaluation")]
+
+        public async Task<IActionResult> getDetailedEvaluation(EvaluationDetailInput dto)
+        {
+            var result = await _bookRepository.getBooksEvaluation(dto);
+            if (result == null) return Unauthorized("Không có quyền admin");
+            return Ok(result);
+        }
 
     }
 }

@@ -5,7 +5,10 @@ using LibraryManagement.Dto.Response;
 using LibraryManagement.Helpers;
 using LibraryManagement.Models;
 using LibraryManagement.Repository.InterFace;
+using LibraryManagement.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
+using System.Globalization;
 
 namespace LibraryManagement.Repository
 {
@@ -15,17 +18,19 @@ namespace LibraryManagement.Repository
         private readonly IBookReceiptRepository _bookReceiptRepository;
         private readonly IUpLoadImageFileRepository _upLoadImageFileRepository;
         private readonly IParameterRepository _parameterRepository;
+        private readonly IAuthenRepository _authen; 
 
         public BookRepository(LibraryManagermentContext context, 
                               IMapper mapper, 
                               IBookReceiptRepository bookReceiptRepository,
                               IUpLoadImageFileRepository upLoadImageFileRepository,
-                              IParameterRepository parameterRepository)
+                              IParameterRepository parameterRepository, IAuthenRepository authen )
         {
             _context = context;
             _bookReceiptRepository = bookReceiptRepository;
             _upLoadImageFileRepository = upLoadImageFileRepository;
             _parameterRepository = parameterRepository;
+            _authen = authen; 
         }
 
         // Hàm thêm mới đầu sách
@@ -280,14 +285,33 @@ namespace LibraryManagement.Repository
                         Evaluations = _context.Evaluates.Where(a => a.IdHeaderBook == ad.IdHeaderBook).Select(k =>
                             new EvaluationDetails
                             {
-                                IdEvaluation = k.IdEvaluate.ToString(),
+                                IdEvaluation = k.IdEvaluate,
+                                IdReader = k.IdReader,
                                 Comment = k.EvaComment,
-                                Rating = k.EvaStar
+                                Rating = k.EvaStar, 
+                                Create_Date = k.CreateDate
                             }
                         ).ToList()
                     }).ToListAsync();
 
             return books;
+        }
+
+        public async Task<List<EvaluationDetails>> getBooksEvaluation(EvaluationDetailInput dto)
+        {
+            var user = await _authen.AuthenticationAsync(dto.token);
+            var role = await _authen.UserRoleCheck(dto.token);
+            if (role != 0) return null!;
+            if (user == null) return null!;
+            var result = await _context.Evaluates.Where(x => x.IdHeaderBook == dto.IdHeaderBook).Select(a => new EvaluationDetails
+            {
+                IdEvaluation = a.IdEvaluate,
+                IdReader = a.IdReader,
+                Comment = a.EvaComment,
+                Rating = a.EvaStar,
+                Create_Date = a.CreateDate
+            }).ToListAsync();
+            return result;
         }
     }
 }

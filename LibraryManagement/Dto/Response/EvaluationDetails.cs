@@ -2,8 +2,11 @@
 {
     public class EvaluationDetails
     {
-        public string IdEvaluation { get; set; }
+        public Guid IdEvaluation { get; set; }
+        public string IdReader { get; set; }
+
         public string Comment { get; set; }
         public int Rating { get; set; }
+        public DateTime Create_Date { get; set; }
     }
 }

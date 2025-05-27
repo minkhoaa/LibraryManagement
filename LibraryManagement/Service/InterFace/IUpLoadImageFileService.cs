@@ -1,6 +1,6 @@
 ﻿namespace LibraryManagement.Repository.InterFace
 {
-    public interface IUpLoadImageFileRepository
+    public interface IUpLoadImageFileService
     {
         Task<string> UploadImageAsync(IFormFile file);
     }

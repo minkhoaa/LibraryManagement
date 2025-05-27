@@ -8,18 +8,18 @@ namespace LibraryManagement.Controllers
     [ApiController]
     public class TypeBookController : ControllerBase
     {
-        private readonly ITypeBookRepository _typeBookRepository;
+        private readonly ITypeBookService _typeBookService;
 
-        public TypeBookController(ITypeBookRepository typeBookRepository)
+        public TypeBookController(ITypeBookService typeBookService)
         {
-            _typeBookRepository = typeBookRepository;
+            _typeBookService = typeBookService;
         }
 
         // Endpoint thêm loại sách
         [HttpPost("add_typebook")]
         public async Task<IActionResult> addTypeBook([FromBody] TypeBookRequest request)
         {
-            var result = await _typeBookRepository.addTypeBookAsync(request);
+            var result = await _typeBookService.addTypeBookAsync(request);
             if (result.Success)
                 return Created("", result);
             return BadRequest(result);
@@ -29,7 +29,7 @@ namespace LibraryManagement.Controllers
         [HttpPut("update_typebook/{idTypeBook}")]
         public async Task<IActionResult> updateTypeBook([FromBody] TypeBookRequest request, Guid idTypeBook)
         {
-            var result = await _typeBookRepository.updateTypeBookAsync(request, idTypeBook);
+            var result = await _typeBookService.updateTypeBookAsync(request, idTypeBook);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
@@ -39,7 +39,7 @@ namespace LibraryManagement.Controllers
         [HttpDelete("delete_typebook/{idTypeBook}")]
         public async Task<IActionResult> deleteTypeBook(Guid idTypeBook)
         {
-            var result = await _typeBookRepository.deleteTypeBook(idTypeBook);
+            var result = await _typeBookService.deleteTypeBook(idTypeBook);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
@@ -47,7 +47,7 @@ namespace LibraryManagement.Controllers
         [HttpGet("getTypeBook")]
         public async Task<IActionResult> getTypeBookAndHeader()
         {
-            var result = await _typeBookRepository.getTypebookAndBooks();
+            var result = await _typeBookService.getTypebookAndBooks();
             return Ok(result); 
         }
     }

@@ -4,7 +4,7 @@ using LibraryManagement.Helpers;
 
 namespace LibraryManagement.Repository.InterFace
 {
-    public interface IRoleRepository
+    public interface IRoleService
     {
         // Thêm role
         public Task<ApiResponse<RoleResponse>> addRoleAsync(RoleRequest request);

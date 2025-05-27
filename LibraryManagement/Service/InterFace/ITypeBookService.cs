@@ -4,7 +4,7 @@ using LibraryManagement.Helpers;
 
 namespace LibraryManagement.Repository.InterFace
 {
-    public interface ITypeBookRepository
+    public interface ITypeBookService
     {
         public Task<ApiResponse<TypeBookResponse>> addTypeBookAsync(TypeBookRequest request);
         public Task<ApiResponse<TypeBookResponse>> updateTypeBookAsync(TypeBookRequest request, Guid idTypeBook);

@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Repository
 {
-    public class BookReceiptRepository : IBookReceiptRepository
+    public class BookReceiptService : IBookReceiptService
     {
         private readonly LibraryManagermentContext _context;
-        public BookReceiptRepository(LibraryManagermentContext context)
+        private readonly IParameterService _parameterRepository;
+        public BookReceiptService(LibraryManagermentContext context, IParameterService parameterRepository)
         {
             _context = context;
+            _parameterRepository = parameterRepository;
         }
 
         // Hàm tạo Id sách
@@ -52,8 +54,24 @@ namespace LibraryManagement.Repository
             return $"tb{nextNumber:D5}";
         }
 
+        // Hàm tạo phiếu nhập sách
         public async Task<ApiResponse<BooKReceiptResponse>> addBookReceiptAsync(BookReceiptRequest request)
         {
+            // Quy định khoảng cách năm xuất bản
+            int publishBookGap = DateTime.Now.Year - request.headerBook.bookCreateRequest.ReprintYear;
+            int publishGap = await _parameterRepository.getValueAsync("PublishGap");
+            if (publishBookGap > publishGap)
+            {
+                return ApiResponse<BooKReceiptResponse>.FailResponse($"Khoảng cách năm xuất bản phải nhỏ hơn {publishGap}", 400);
+            }
+
+            // Kiểm tra Reader có tồn tại hay không
+            var reader = await _context.Readers.FirstOrDefaultAsync(rd => rd.IdReader == request.IdReader);
+            if (reader == null)
+            {
+                return ApiResponse<BooKReceiptResponse>.FailResponse("không tìm thấy độc giả", 404);
+            }    
+
             var headerBook = await _context.HeaderBooks.FirstOrDefaultAsync(hb => hb.NameHeaderBook == request.headerBook.NameHeaderBook);
             // Tạo HeaderBook
             if (headerBook == null)

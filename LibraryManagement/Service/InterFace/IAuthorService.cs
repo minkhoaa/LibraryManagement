@@ -5,7 +5,7 @@ using LibraryManagement.Models;
 
 namespace LibraryManagement.Repository.InterFace
 {
-    public interface IAuthorRepository
+    public interface IAuthorService
     {
         public Task<List<AuthorResponse>> getListAuthor(string token);
         public Task<ApiResponse<AuthorResponse>> addAuthorAsync(AuthorRequest request);

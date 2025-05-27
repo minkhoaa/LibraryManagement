@@ -10,32 +10,32 @@ namespace LibraryManagement.Controllers
     [ApiController]
     public class RoleController : ControllerBase
     {
-        private IRoleRepository _roleRepository;
+        private IRoleService _roleService;
 
-        public RoleController(IRoleRepository roleRepository)
+        public RoleController(IRoleService roleService)
         {
-            _roleRepository = roleRepository;
+            _roleService = roleService;
         }
 
         // Endpoint tạo role mới
         [HttpPost("add_role")]
         public async Task<ApiResponse<RoleResponse>> addNewRole([FromBody] RoleRequest request)
         {
-            return await _roleRepository.addRoleAsync(request);
+            return await _roleService.addRoleAsync(request);
         }
 
         // Endpoint xóa role
         [HttpDelete("delete_role")]
         public async Task<ApiResponse<string>> deleteRole(string RoleName)
         {
-            return await _roleRepository.deleteRoleAsync(RoleName);
+            return await _roleService.deleteRoleAsync(RoleName);
         }
 
         // Endpoint sửa role
         [HttpPut("update_role")]
         public async Task<ApiResponse<RoleResponse>> updateRole([FromBody] RoleRequest request)
         {
-            return await _roleRepository.updateRoleAsync(request);
+            return await _roleService.updateRoleAsync(request);
         }
     }
 }

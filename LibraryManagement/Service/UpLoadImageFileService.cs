@@ -4,12 +4,12 @@ using LibraryManagement.Repository.InterFace;
 
 namespace LibraryManagement.Repository
 {
-    public class UpLoadImageFileRepository : IUpLoadImageFileRepository
+    public class UpLoadImageFileService : IUpLoadImageFileService
     {
         private readonly Cloudinary _cloudinary;
-        private readonly ILogger<UpLoadImageFileRepository> _logger;
+        private readonly ILogger<UpLoadImageFileService> _logger;
 
-        public UpLoadImageFileRepository(Cloudinary cloudinary, ILogger<UpLoadImageFileRepository> logger)
+        public UpLoadImageFileService(Cloudinary cloudinary, ILogger<UpLoadImageFileService> logger)
         {
             _cloudinary = cloudinary;
             _logger = logger;

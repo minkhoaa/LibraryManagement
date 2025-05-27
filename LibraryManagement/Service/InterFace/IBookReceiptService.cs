@@ -4,7 +4,7 @@ using LibraryManagement.Helpers;
 
 namespace LibraryManagement.Repository.InterFace
 {
-    public interface IBookReceiptRepository
+    public interface IBookReceiptService
     {
         Task<ApiResponse<BooKReceiptResponse>> addBookReceiptAsync(BookReceiptRequest request);
         Task<ApiResponse<BooKReceiptResponse>> updateBookReceiptAsync(BookReceiptRequest request, Guid idBookReipt);

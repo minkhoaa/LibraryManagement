@@ -8,18 +8,18 @@ namespace LibraryManagement.Controllers
     [ApiController]
     public class TypeReaderController : ControllerBase
     {
-        private readonly ITypeReaderRepository _typeReaderRepository;
+        private readonly ITypeReaderService _typeReaderServie;
 
-        public TypeReaderController(ITypeReaderRepository typeReaderRepository)
+        public TypeReaderController(ITypeReaderService typeReaderServie)
         {
-            _typeReaderRepository = typeReaderRepository;
+            _typeReaderServie = typeReaderServie;
         }
 
         // Endpoint thêm loại độc giả
         [HttpPost("add_typereader")]
         public async Task<IActionResult> addTypeReader([FromBody] TypeReaderRequest request)
         {
-            var result = await _typeReaderRepository.addTypeReaderAsync(request);
+            var result = await _typeReaderServie.addTypeReaderAsync(request);
             if (result.Success)
                 return Created("", result);
             return BadRequest(result);
@@ -29,7 +29,7 @@ namespace LibraryManagement.Controllers
         [HttpPut("update_typereader/{idTypeReader}")]
         public async Task<IActionResult> updateTypeReader([FromBody] TypeReaderRequest request, Guid idTypeReader)
         {
-            var result = await _typeReaderRepository.updateTypeReaderAsync(request, idTypeReader);
+            var result = await _typeReaderServie.updateTypeReaderAsync(request, idTypeReader);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
@@ -39,7 +39,7 @@ namespace LibraryManagement.Controllers
         [HttpDelete("delete_typereader/{idTypeReader}")]
         public async Task<IActionResult> deleteTypeReader(Guid idTypeReader)
         {
-            var result = await _typeReaderRepository.deleteTypeReaderAsync(idTypeReader);
+            var result = await _typeReaderServie.deleteTypeReaderAsync(idTypeReader);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);

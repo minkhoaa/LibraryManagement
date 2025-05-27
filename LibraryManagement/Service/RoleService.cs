@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Repository
 {
-    public class RoleRepository : IRoleRepository
+    public class RoleService : IRoleService
     {
         private readonly LibraryManagermentContext _context;
         private readonly IMapper _mapper;
 
-        public RoleRepository(LibraryManagermentContext context, IMapper mapper)
+        public RoleService(LibraryManagermentContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

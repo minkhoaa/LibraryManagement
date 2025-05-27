@@ -10,18 +10,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Repository
 {
-    public class ReaderRepository : IReaderRepository
+    public class ReaderService : IReaderService
     {
         private readonly LibraryManagermentContext _context;
         private readonly IMapper _mapper;
-        private readonly IAuthenRepository _account;
-        private readonly IParameterRepository _parameterRepository;
-        private readonly IUpLoadImageFileRepository _upLoadImageFileRepository;
-        public ReaderRepository(LibraryManagermentContext contex, 
+        private readonly IAuthenService _account;
+        private readonly IParameterService _parameterRepository;
+        private readonly IUpLoadImageFileService _upLoadImageFileRepository;
+        public ReaderService(LibraryManagermentContext contex, 
                                 IMapper mapper, 
-                                IAuthenRepository authen,
-                                IParameterRepository parameterRepository,
-                                IUpLoadImageFileRepository upLoadImageFileRepository)
+                                IAuthenService authen,
+                                IParameterService parameterRepository,
+                                IUpLoadImageFileService upLoadImageFileRepository)
         {
             _account = authen;
             _context = contex;
@@ -74,7 +74,6 @@ namespace LibraryManagement.Repository
 
             newReader.IdReader = await generateNextIdReaderAsync();
             newReader.ReaderUsername = request.Email;
-            newReader.ExpiryDate = newReader.CreateDate.AddMonths(6);
             newReader.ReaderPassword = BCrypt.Net.BCrypt.HashPassword(request.ReaderPassword);
             newReader.RoleName = AppRoles.Reader;
 

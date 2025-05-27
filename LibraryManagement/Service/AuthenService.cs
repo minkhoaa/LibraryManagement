@@ -16,7 +16,7 @@ using System.Text;
 
 namespace LibraryManagement.Repository
 {
-    public class AuthenRepository : IAuthenRepository
+    public class AuthenService : IAuthenService
     {
         private readonly LibraryManagermentContext _context;
         private readonly ITokenGenerator _tokenGenerator;
@@ -27,7 +27,7 @@ namespace LibraryManagement.Repository
 
         private static readonly Guid DefaultTypeReaderId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6");
 
-        public AuthenRepository(LibraryManagermentContext context, ITokenGenerator tokenGenerator,
+        public AuthenService(LibraryManagermentContext context, ITokenGenerator tokenGenerator,
             IMapper mapper, IFluentEmail email, IMemoryCache memoryCache, IConfiguration configuration)
         {
             _configuration = configuration; 
@@ -100,7 +100,8 @@ namespace LibraryManagement.Repository
                 ReaderUsername = confirmOtp.Email,
                 ReaderPassword = BCrypt.Net.BCrypt.HashPassword(cacheData.Password),
                 IdTypeReader = DefaultTypeReaderId,
-                RoleName = newRole.RoleName
+                RoleName = newRole.RoleName,
+                CreateDate = DateTime.UtcNow,
             };
            
             await _context.Readers.AddAsync(reader);
@@ -170,7 +171,6 @@ namespace LibraryManagement.Repository
                     Email = a.Email, 
                     Dob = a.Dob,
                     CreateDate = a.CreateDate, 
-                    ExpiryDate = a.ExpiryDate,
                     ReaderUsername = a.ReaderUsername, 
                     RoleName = a.RoleName,
                 }).FirstOrDefaultAsync() ;

@@ -1,9 +1,6 @@
 ﻿using LibraryManagement.Dto.Request;
 using LibraryManagement.Repository.InterFace;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Validations;
-using Microsoft.VisualBasic;
-using System.Runtime.CompilerServices;
 
 namespace LibraryManagement.Controllers
 {
@@ -11,18 +8,18 @@ namespace LibraryManagement.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private readonly IBookRepository _bookRepository;
+        private readonly IBookService _bookService;
 
-        public BookController(IBookRepository bookRepository)
+        public BookController(IBookService bookService)
         {
-            _bookRepository = bookRepository;
+            _bookService = bookService;
         }
 
         // Endpoint tạo sách
         [HttpPost("add_book")]
         public async Task<IActionResult> addHeaderBook([FromForm] HeaderBookCreationRequest request)
         {
-            var result = await _bookRepository.addBookAsync(request);
+            var result = await _bookService.addBookAsync(request);
             if (result.Success)
                 return Created("", result);
             return BadRequest(result);
@@ -32,7 +29,7 @@ namespace LibraryManagement.Controllers
         [HttpDelete("delete_book/{idBook}/{idTheBook}")]
         public async Task<IActionResult> deleteHeaderBook(string idBook)
         {
-            var result = await _bookRepository.deleteBookAsync(idBook);
+            var result = await _bookService.deleteBookAsync(idBook);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
@@ -44,7 +41,7 @@ namespace LibraryManagement.Controllers
                                                           string idBook, 
                                                           string idTheBook)
         {
-            var result = await _bookRepository.updateBookAsync(request, idBook, idTheBook);
+            var result = await _bookService.updateBookAsync(request, idBook, idTheBook);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
@@ -53,14 +50,14 @@ namespace LibraryManagement.Controllers
         [HttpPost("getBookAndComments")]
         public async Task<IActionResult> getBooksAndComments([FromBody] GetHeaderBookDtoInput dto)
         {
-            var result = await _bookRepository.getHeaderbookandCommentsByid(dto);
+            var result = await _bookService.getHeaderbookandCommentsByid(dto);
             return Ok(result);
         }
         [HttpPost("getEvaluation")]
 
         public async Task<IActionResult> getDetailedEvaluation(EvaluationDetailInput dto)
         {
-            var result = await _bookRepository.getBooksEvaluation(dto);
+            var result = await _bookService.getBooksEvaluation(dto);
             if (result == null) return Unauthorized("Không có quyền admin");
             return Ok(result);
         }
@@ -68,14 +65,14 @@ namespace LibraryManagement.Controllers
         [HttpPost("LikeHeaderBook")]
         public async Task<IActionResult> likeHeaderBook(EvaluationDetailInput dto)
         {
-            var result = await _bookRepository.LikeHeaderBook(dto);
+            var result = await _bookService.LikeHeaderBook(dto);
             if (result == false) return Unauthorized("Vui lòng đăng nhập ");
             return Ok("Success");
         }
         [HttpPost("getAllBooksAndComments")]
         public async Task<IActionResult> getAllBooksAndComments([FromBody] string token)
         {
-            var result = await _bookRepository.getAllHeaderbookandComments(token);
+            var result = await _bookService.getAllHeaderbookandComments(token);
             if (result == null) return Unauthorized("Vui lòng đăng nhập");
             return Ok(result); 
         }
@@ -83,7 +80,7 @@ namespace LibraryManagement.Controllers
         [HttpPost("getLikedHeaderbook")]
         public async Task<IActionResult> getLikeHeaderBook([FromBody] string token)
         {
-            var result = await _bookRepository.getLikedHeaderBook(token);
+            var result = await _bookService.getLikedHeaderBook(token);
             if (result == null) return Unauthorized("Vui lòng đăng nhập");
             return Ok(result); 
 
@@ -91,7 +88,7 @@ namespace LibraryManagement.Controllers
         [HttpDelete("deleteEvaluation")]
         public async Task<IActionResult> deleteEvaluation([FromBody]DeleteEvaluationInput dto)
         {
-            var user = await _bookRepository.DeleteEvaluation(dto);
+            var user = await _bookService.DeleteEvaluation(dto);
             if (user == false) return Unauthorized();
             return Ok("Xóa thành công"); 
         }

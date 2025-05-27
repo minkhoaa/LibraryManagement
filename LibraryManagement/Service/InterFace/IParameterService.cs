@@ -4,7 +4,7 @@ using LibraryManagement.Helpers;
 
 namespace LibraryManagement.Repository.InterFace
 {
-    public interface IParameterRepository
+    public interface IParameterService
     {
         Task<ApiResponse<ParameterResponse>> addParameterAsync(ParameterRequest request);
         Task<ApiResponse<ParameterResponse>> updateParameterAsync(ParameterRequest request, Guid idParameter);

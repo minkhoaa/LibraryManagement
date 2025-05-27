@@ -6,24 +6,22 @@ using LibraryManagement.Helpers;
 using LibraryManagement.Models;
 using LibraryManagement.Repository.InterFace;
 using LibraryManagement.Repository.IRepository;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace LibraryManagement.Repository
 {
-    public class AuthorRepository : IAuthorRepository
+    public class AuthorService : IAuthorService
     {
         private readonly LibraryManagermentContext _context;
         private readonly IMapper _mapper;
-        private readonly IAuthenRepository _account; 
+        private readonly IAuthenService _account; 
 
-        public AuthorRepository(LibraryManagermentContext context, IMapper mapper, IAuthenRepository account)
+        public AuthorService(LibraryManagermentContext context, IMapper mapper, IAuthenService account)
         {
             _context = context;
             _mapper = mapper;
-            _account = account;         }
+            _account = account;         
+        }
 
         // Lấy danh sách tác giả
         public async Task<List<AuthorResponse>> getListAuthor(string token)

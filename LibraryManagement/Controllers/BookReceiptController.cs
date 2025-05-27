@@ -8,18 +8,18 @@ namespace LibraryManagement.Controllers
     [ApiController]
     public class BookReceiptController : ControllerBase
     {
-        private readonly IBookReceiptRepository _bookReceiptRepository;
+        private readonly IBookReceiptService _bookReceiptService;
 
-        public BookReceiptController(IBookReceiptRepository bookReceiptRepository)
+        public BookReceiptController(IBookReceiptService bookReceiptService)
         {
-            _bookReceiptRepository = bookReceiptRepository;
+            _bookReceiptService = bookReceiptService;
         }
 
         // Endpoint thêm phiếu nhập sách
         [HttpPost("add_bookreceipt")]
         public async Task<IActionResult> addBookReceipt([FromBody] BookReceiptRequest request)
         {
-            var result = await _bookReceiptRepository.addBookReceiptAsync(request);
+            var result = await _bookReceiptService.addBookReceiptAsync(request);
             if (result.Success)
                 return Created("", result);
             else return BadRequest(result);
@@ -29,7 +29,7 @@ namespace LibraryManagement.Controllers
         [HttpDelete("delete_bookreceipt/{idBookReceipt}")]
         public async Task<IActionResult> deleteBookReceipt(Guid idBookReceipt)
         {
-            var result = await _bookReceiptRepository.deleteBookReceiptAsync(idBookReceipt);
+            var result = await _bookReceiptService.deleteBookReceiptAsync(idBookReceipt);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
@@ -37,7 +37,7 @@ namespace LibraryManagement.Controllers
         [HttpPost("getAllReceipt")]
         public async Task<IActionResult> getAllReceipt([FromBody]string token)
         {
-            var result = await _bookReceiptRepository.getAllReceiptHistory(token);
+            var result = await _bookReceiptService.getAllReceiptHistory(token);
             if (result == null) return Unauthorized("Không có quyền admin");
             return Ok(result);
         }

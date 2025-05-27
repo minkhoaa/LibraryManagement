@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Repository
 {
-    public class TypeBookRepository : ITypeBookRepository
+    public class TypeBookService : ITypeBookService
     {
         private readonly LibraryManagermentContext _context;
         private readonly IMapper _mapper;
 
-        public TypeBookRepository(LibraryManagermentContext context, IMapper mapper)
+        public TypeBookService(LibraryManagermentContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

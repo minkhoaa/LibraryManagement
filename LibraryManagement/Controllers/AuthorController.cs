@@ -8,11 +8,11 @@ namespace LibraryManagement.Controllers
     [ApiController]
     public class AuthorController : ControllerBase
     {
-        private readonly IAuthorRepository _authorRepository;
+        private readonly IAuthorService _authorService;
 
-        public AuthorController(IAuthorRepository authorRepository)
+        public AuthorController(IAuthorService authorService)
         {
-            _authorRepository = authorRepository;
+            _authorService = authorService;
         }
 
         // Endpoint lấy danh sách tác giả
@@ -21,7 +21,7 @@ namespace LibraryManagement.Controllers
         {
             try
             {
-                var result = await _authorRepository.getListAuthor(token);
+                var result = await _authorService.getListAuthor(token);
                 if (result == null) return Unauthorized("Vui lòng đăng nhập");
                 return Ok(result); 
             }
@@ -35,7 +35,7 @@ namespace LibraryManagement.Controllers
         [HttpPost("add_author")]
         public async Task<IActionResult> addAuthor(AuthorRequest request)
         {
-            var result = await _authorRepository.addAuthorAsync(request);
+            var result = await _authorService.addAuthorAsync(request);
             if (result.Success)
                 return Created("", result);
             return BadRequest(result);
@@ -45,7 +45,7 @@ namespace LibraryManagement.Controllers
         [HttpPut("update_author/{idAuthor}")]
         public async Task<IActionResult> updateAuthor(AuthorRequest request, Guid idAuthor)
         {
-            var result = await _authorRepository.updateAuthorAsync(request, idAuthor);
+            var result = await _authorService.updateAuthorAsync(request, idAuthor);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
@@ -55,7 +55,7 @@ namespace LibraryManagement.Controllers
         [HttpDelete("delete_author/{idAuthor}")]
         public async Task<IActionResult> deleteAuthor(Guid idAuthor)
         {
-            var result = await _authorRepository.deleteAuthorAsync(idAuthor);
+            var result = await _authorService.deleteAuthorAsync(idAuthor);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
@@ -63,7 +63,7 @@ namespace LibraryManagement.Controllers
         [HttpPost("findAuthor")]
         public async Task<IActionResult> findAuthor([FromBody] FindAuthorInputDto dto)
         {
-            var result = await _authorRepository.findAuthor(dto);
+            var result = await _authorService.findAuthor(dto);
             if (result == null) return Unauthorized("Không có quyền admin");
             return Ok(result);
         }

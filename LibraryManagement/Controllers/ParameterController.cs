@@ -8,17 +8,17 @@ namespace LibraryManagement.Controllers
     [ApiController]
     public class ParameterController : ControllerBase
     {
-        private readonly IParameterRepository _parameterRepository;
-        public ParameterController(IParameterRepository parameterRepository)
+        private readonly IParameterService _parameterService;
+        public ParameterController(IParameterService parameterService)
         {
-            _parameterRepository = parameterRepository;
+            _parameterService = parameterService;
         }
 
         // Endpoint thêm quy định
         [HttpPost("add_parameter")]
         public async Task<IActionResult> addNewParameter([FromBody] ParameterRequest request)
         {
-            var result = await _parameterRepository.addParameterAsync(request);
+            var result = await _parameterService.addParameterAsync(request);
             if (result.Success)
                 return Created("", result);
             return BadRequest(result);
@@ -28,7 +28,7 @@ namespace LibraryManagement.Controllers
         [HttpPut("update_parameter/{idParameter}")]
         public async Task<IActionResult> updateParameter([FromBody] ParameterRequest request, Guid idParameter)
         {
-            var result = await _parameterRepository.updateParameterAsync(request, idParameter);
+            var result = await _parameterService.updateParameterAsync(request, idParameter);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);
@@ -38,7 +38,7 @@ namespace LibraryManagement.Controllers
         [HttpDelete("delete_parameter/{idParameter}")]
         public async Task<IActionResult> deleteParameter(Guid idParameter)
         {
-            var result = await _parameterRepository.deleteParameterAsync(idParameter);
+            var result = await _parameterService.deleteParameterAsync(idParameter);
             if (result.Success)
                 return Ok(result);
             return NotFound(result);

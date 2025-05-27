@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Repository
 {
-    public class ParameterRepository : IParameterRepository
+    public class ParameterService : IParameterService
     {
         private readonly LibraryManagermentContext _context;
         private readonly IMapper _mapper;
 
-        public ParameterRepository(LibraryManagermentContext context, IMapper mapper)
+        public ParameterService(LibraryManagermentContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

@@ -32,10 +32,7 @@ namespace LibraryManagement.Models
         public DateTime Dob { get; set; }
 
         [Column("create_date")]
-        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
-
-        [Column("expiry_date")]
-        public DateTime ExpiryDate { get; set; }
+        public DateTime CreateDate { get; set; } 
 
         [Column("reader_username")]
         public string ReaderUsername { get; set; }

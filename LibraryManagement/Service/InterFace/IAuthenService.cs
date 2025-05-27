@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace LibraryManagement.Repository.IRepository
 {
-    public interface IAuthenRepository
+    public interface IAuthenService
     {
         // Interface đăng ký
         public Task<bool> SignUpWithOtpAsync(ConfirmOtp confirmOtp);

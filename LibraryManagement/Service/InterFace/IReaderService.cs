@@ -4,7 +4,7 @@ using LibraryManagement.Helpers;
 
 namespace LibraryManagement.Repository.IRepository
 {
-    public interface IReaderRepository
+    public interface IReaderService
     {
         // Interface thêm độc giả
         public Task<ApiResponse<ReaderResponse>> addReaderAsync(ReaderCreationRequest request);

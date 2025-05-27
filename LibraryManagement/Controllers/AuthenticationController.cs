@@ -10,18 +10,18 @@ namespace LibraryManagement.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly IAuthenRepository _authenRepository;
+        private readonly IAuthenService _authenService;
 
-        public AuthenticationController(IAuthenRepository authenRepository)
+        public AuthenticationController(IAuthenService authenService)
         {
-            _authenRepository = authenRepository;
+            _authenService = authenService;
         }
 
         // Endpoint đăng ký
         [HttpPost("SignUpSendOtp")]
         public async Task<IActionResult> SendOtpSignUp(SignUpModel request)
         {
-            var result =  await _authenRepository.SendEmailConfirmation(request);
+            var result =  await _authenService.SendEmailConfirmation(request);
             if (result == false) return BadRequest("Người dùng này đã tồn tại");
             return Ok(); 
         }
@@ -30,7 +30,7 @@ namespace LibraryManagement.Controllers
         [HttpPost("SignUpWithReceivedOtp")]
         public async Task<IActionResult> ConfirmOtpSignUp(ConfirmOtp confirmOtp)
         {
-            var result = await _authenRepository.SignUpWithOtpAsync(confirmOtp);
+            var result = await _authenService.SignUpWithOtpAsync(confirmOtp);
             if (result == false) return BadRequest();
             return Ok("Đăng kí thành công");
         }
@@ -38,12 +38,12 @@ namespace LibraryManagement.Controllers
         [HttpPost("SignIn")]   
         public async Task<AuthenticationResponse> SignIn(AuthenticationRequest request)
         {
-            return await _authenRepository.SignInAsync(request);
+            return await _authenService.SignInAsync(request);
         }
         [HttpPost("Authentication")]
         public async Task<IActionResult> Authentication([FromBody]string token)
         {
-            var reader = await _authenRepository.AuthenticationAsync(token);
+            var reader = await _authenService.AuthenticationAsync(token);
             if (reader == null) return NotFound();
 
             return Ok(reader);
@@ -54,7 +54,7 @@ namespace LibraryManagement.Controllers
         [HttpPost("RefreshToken")]
         public async Task<RefreshTokenResponse> RefreshToken([FromBody] string token)
         {
-            return await _authenRepository.refreshTokenAsync(token);
+            return await _authenService.refreshTokenAsync(token);
         }
     } 
 }

@@ -10,7 +10,6 @@ using System.Text;
 using LibraryManagement.Repository.InterFace;
 using LibraryManagement.Models;
 using Sprache;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using CloudinaryDotNet;
 using System.Net;
@@ -95,18 +94,18 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 var emailConfig = builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>();
 
 // Life cycle DI
-builder.Services.AddScoped<IReaderRepository, ReaderRepository>();
-builder.Services.AddScoped<IAuthenRepository, AuthenRepository>();
+builder.Services.AddScoped<IReaderService, ReaderService>();
+builder.Services.AddScoped<IAuthenService, AuthenService>();
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
-builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
-builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<ITypeReaderRepository, TypeReaderRepository>();
-builder.Services.AddScoped<ITypeBookRepository, TypeBookRepository>();
-builder.Services.AddScoped<IBookReceiptRepository, BookReceiptRepository>();
-builder.Services.AddScoped<ILoanSlipBookRepository, LoanSlipBookRepository>();
-builder.Services.AddScoped<IParameterRepository, ParameterRepository>();
-builder.Services.AddScoped<IUpLoadImageFileRepository, UpLoadImageFileRepository>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<ITypeReaderService, TypeReaderService>();
+builder.Services.AddScoped<ITypeBookService, TypeBookService>();
+builder.Services.AddScoped<IBookReceiptService, BookReceiptService>();
+builder.Services.AddScoped<ILoanBookService, LoanBookService>();
+builder.Services.AddScoped<IParameterService, ParameterService>();
+builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 
 
@@ -117,7 +116,7 @@ var account = new Account(
     Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APISECRET")
 );
 builder.Services.AddSingleton(new Cloudinary(account));
-builder.Services.AddScoped<IUpLoadImageFileRepository, UpLoadImageFileRepository>();
+builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 
 

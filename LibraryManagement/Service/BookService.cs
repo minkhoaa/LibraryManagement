@@ -10,19 +10,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Repository
 {
-    public class BookRepository : IBookRepository
+    public class BookService : IBookService
     {
         private readonly LibraryManagermentContext _context;
-        private readonly IBookReceiptRepository _bookReceiptRepository;
-        private readonly IUpLoadImageFileRepository _upLoadImageFileRepository;
-        private readonly IParameterRepository _parameterRepository;
-        private readonly IAuthenRepository _authen; 
+        private readonly IBookReceiptService _bookReceiptRepository;
+        private readonly IUpLoadImageFileService _upLoadImageFileRepository;
+        private readonly IParameterService _parameterRepository;
+        private readonly IAuthenService _authen; 
 
-        public BookRepository(LibraryManagermentContext context, 
+        public BookService(LibraryManagermentContext context, 
                               IMapper mapper, 
-                              IBookReceiptRepository bookReceiptRepository,
-                              IUpLoadImageFileRepository upLoadImageFileRepository,
-                              IParameterRepository parameterRepository, IAuthenRepository authen 
+                              IBookReceiptService bookReceiptRepository,
+                              IUpLoadImageFileService upLoadImageFileRepository,
+                              IParameterService parameterRepository, IAuthenService authen 
             )
         {
             _context = context;
@@ -61,12 +61,12 @@ namespace LibraryManagement.Repository
                 {
                     foreach (var authorId in request.IdAuthors)
                     {
-                        var createBook = new BookWriting
+                        var bookWriting = new BookWriting
                         {
                             IdHeaderBook = headerBook.IdHeaderBook,
                             IdAuthor = authorId
                         };
-                        _context.BookWritings.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
+                        _context.BookWritings.Add(bookWriting); // Nạp dữ liệu vào bảng sáng tác
                     }
                 }
             }
@@ -162,7 +162,6 @@ namespace LibraryManagement.Repository
 
             if (remainingBooks == 0)
             {
-                
                 var headerBook = await _context.HeaderBooks // Xóa đầu sách
                     .FirstOrDefaultAsync(hb => hb.IdHeaderBook == book.IdHeaderBook);
 
@@ -184,6 +183,14 @@ namespace LibraryManagement.Repository
         public async Task<ApiResponse<HeaderBookResponse>> updateBookAsync(HeaderBookUpdateRequest request, 
                                                                            string idBook, string idTheBook)
         {
+            // Quy định khoảng cách năm xuất bản
+            int publishBookGap = DateTime.Now.Year - request.bookUpdateRequest.ReprintYear;
+            int publishGap = await _parameterRepository.getValueAsync("PublishGap");
+            if (publishBookGap > publishGap)
+            {
+                return ApiResponse<HeaderBookResponse>.FailResponse($"Khoảng cách năm xuất bản phải nhỏ hơn {publishGap}", 400);
+            }
+
             var checkBook = await _context.Books.FirstOrDefaultAsync(b => b.IdBook == idBook.ToString());
             if (checkBook == null)
             {
@@ -257,6 +264,7 @@ namespace LibraryManagement.Repository
             };
             return ApiResponse<HeaderBookResponse>.SuccessResponse("Cập nhật sách thành công", 201, response);
         }
+
 
         public Task<BookResponse> findPost(string name_book)
         {

@@ -13,11 +13,9 @@ namespace LibraryManagement.Helpers
     public class TokenGenerator : ITokenGenerator
     {
         private readonly IConfiguration _config;
-        private readonly LibraryManagermentContext _context;
-        public TokenGenerator(IConfiguration config, LibraryManagermentContext context)
+        public TokenGenerator(IConfiguration config)
         {
             _config = config;
-            _context = context;
         }
         public string GenerateToken(Reader reader)
         {

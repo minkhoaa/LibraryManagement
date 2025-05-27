@@ -56,7 +56,7 @@ namespace LibraryManagement.Models
         public Role Role { get; set; }
 
 
-        public ICollection<LikedHeaderBook> likedHeaderBooks { get; set; }
+        public ICollection<FavoriteBook> likedHeaderBooks { get; set; }
     }
 
 }

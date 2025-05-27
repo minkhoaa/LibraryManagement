@@ -5,7 +5,6 @@ using LibraryManagement.Helpers;
 using LibraryManagement.Models;
 using LibraryManagement.Repository.InterFace;
 using Microsoft.EntityFrameworkCore;
-using System.Net.Mail;
 
 namespace LibraryManagement.Repository
 {
@@ -72,12 +71,12 @@ namespace LibraryManagement.Repository
                 {
                     foreach (var authorId in request.headerBook.IdAuthors)
                     {
-                        var createBook = new CreateBook
+                        var createBook = new BookWriting
                         {
                             IdHeaderBook = headerBook.IdHeaderBook,
                             IdAuthor = authorId
                         };
-                        _context.CreateBooks.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
+                        _context.BookWritings.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
                     }
                 }
             }

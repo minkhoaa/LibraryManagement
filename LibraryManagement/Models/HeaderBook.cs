@@ -22,7 +22,7 @@ namespace LibraryManagement.Models
         public TypeBook TypeBook { get; set; }
         public ICollection<Evaluate> Evaluates { get; set; }
 
-        public ICollection<LikedHeaderBook> likedHeaderBooks { get; set; }
+        public ICollection<FavoriteBook> likedHeaderBooks { get; set; }
     }
 
 }

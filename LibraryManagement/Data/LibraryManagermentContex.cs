@@ -21,20 +21,21 @@ namespace LibraryManagement.Data
         public DbSet<Author> Authors { get; set; }
         public DbSet<HeaderBook> HeaderBooks { get; set; }
         public DbSet<TheBook> TheBooks { get; set; }
-        public DbSet<CreateBook> CreateBooks { get; set; }
-        public DbSet<Penalty> Penalties { get; set; }
+        public DbSet<BookWriting> BookWritings { get; set; }
+        public DbSet<PenaltyTicket> PenaltyTickets { get; set; }
+        public DbSet<FavoriteBook> FavoriteBooks { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Evaluate> Evaluates { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
 
-        public DbSet<LikedHeaderBook> LikedHeaderBooks { get; set; }
+        public DbSet<FavoriteBook> LikedHeaderBooks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Table names
-            modelBuilder.Entity<LikedHeaderBook>().ToTable("likedheaderbook");
+            modelBuilder.Entity<FavoriteBook>().ToTable("likedheaderbook");
             modelBuilder.Entity<Reader>().ToTable("reader");
             modelBuilder.Entity<TypeReader>().ToTable("typereader");
             modelBuilder.Entity<TypeBook>().ToTable("typebook");
@@ -42,11 +43,11 @@ namespace LibraryManagement.Data
             modelBuilder.Entity<HeaderBook>().ToTable("headerbook");
             modelBuilder.Entity<Book>().ToTable("book");
             modelBuilder.Entity<TheBook>().ToTable("thebook");
-            modelBuilder.Entity<CreateBook>().ToTable("create_book");
+            modelBuilder.Entity<BookWriting>().ToTable("book_writing");
             modelBuilder.Entity<BookReceipt>().ToTable("bookreceipt");
             modelBuilder.Entity<DetailBookReceipt>().ToTable("detail_bookreceipt");
             modelBuilder.Entity<LoanSlipBook>().ToTable("loan_slipbook");
-            modelBuilder.Entity<Penalty>().ToTable("penalty");
+            modelBuilder.Entity<PenaltyTicket>().ToTable("penalty_ticket");
             modelBuilder.Entity<CategoryReport>().ToTable("category_report");
             modelBuilder.Entity<CategoryReportDetail>().ToTable("categoty_reportdetail");
             modelBuilder.Entity<OverdueReport>().ToTable("overdue_report");
@@ -56,6 +57,7 @@ namespace LibraryManagement.Data
             modelBuilder.Entity<Permission>().ToTable("permissions");
             modelBuilder.Entity<RolePermission>().ToTable("role_permission");
             modelBuilder.Entity<Parameter>().ToTable("parameters");
+            modelBuilder.Entity<FavoriteBook>().ToTable("favoritebook");
 
             // Composite primary keys
             modelBuilder.Entity<RolePermission>()
@@ -67,7 +69,7 @@ namespace LibraryManagement.Data
             modelBuilder.Entity<DetailBookReceipt>()
                 .HasKey(d => new { d.IdBookReceipt, d.IdBook });
 
-            modelBuilder.Entity<CreateBook>()
+            modelBuilder.Entity<BookWriting>()
                 .HasKey(cb => new { cb.IdHeaderBook, cb.IdAuthor });
         }
     }

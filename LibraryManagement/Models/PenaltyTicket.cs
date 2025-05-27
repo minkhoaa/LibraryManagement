@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryManagement.Models
 {
-    public class Penalty
+    public class PenaltyTicket
     {
         [Key]
         public Guid IdPenalty { get; set; }

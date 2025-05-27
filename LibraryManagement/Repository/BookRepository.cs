@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CloudinaryDotNet.Actions;
 using LibraryManagement.Data;
 using LibraryManagement.Dto.Request;
 using LibraryManagement.Dto.Response;
@@ -8,9 +7,6 @@ using LibraryManagement.Models;
 using LibraryManagement.Repository.InterFace;
 using LibraryManagement.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using Newtonsoft.Json.Linq;
-using System.Globalization;
 
 namespace LibraryManagement.Repository
 {
@@ -26,7 +22,8 @@ namespace LibraryManagement.Repository
                               IMapper mapper, 
                               IBookReceiptRepository bookReceiptRepository,
                               IUpLoadImageFileRepository upLoadImageFileRepository,
-                              IParameterRepository parameterRepository, IAuthenRepository authen )
+                              IParameterRepository parameterRepository, IAuthenRepository authen 
+            )
         {
             _context = context;
             _bookReceiptRepository = bookReceiptRepository;
@@ -64,12 +61,12 @@ namespace LibraryManagement.Repository
                 {
                     foreach (var authorId in request.IdAuthors)
                     {
-                        var createBook = new CreateBook
+                        var createBook = new BookWriting
                         {
                             IdHeaderBook = headerBook.IdHeaderBook,
                             IdAuthor = authorId
                         };
-                        _context.CreateBooks.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
+                        _context.BookWritings.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
                     }
                 }
             }
@@ -169,11 +166,11 @@ namespace LibraryManagement.Repository
                 var headerBook = await _context.HeaderBooks // Xóa đầu sách
                     .FirstOrDefaultAsync(hb => hb.IdHeaderBook == book.IdHeaderBook);
 
-                var createBooks = await _context.CreateBooks // Xóa sáng tác của tác giả
+                var createBooks = await _context.BookWritings // Xóa sáng tác của tác giả
                     .Where(cb => cb.IdHeaderBook == book.IdHeaderBook)
                     .ToListAsync();
 
-                _context.CreateBooks.RemoveRange(createBooks);
+                _context.BookWritings.RemoveRange(createBooks);
                 if (headerBook != null)
                 {
                     _context.HeaderBooks.Remove(headerBook);
@@ -210,12 +207,12 @@ namespace LibraryManagement.Repository
                 {
                     foreach (var authorId in request.IdAuthors)
                     {
-                        var createBook = new CreateBook
+                        var createBook = new BookWriting
                         {
                             IdHeaderBook = headerBook.IdHeaderBook,
                             IdAuthor = authorId
                         };
-                        _context.CreateBooks.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
+                        _context.BookWritings.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
                     }
                 }
             }else
@@ -265,12 +262,6 @@ namespace LibraryManagement.Repository
         {
             throw new NotImplementedException();
         }
-
-        public Task<string> generateNextIdBookAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<List<HeadbookAndComments>> getHeaderbookandCommentsByid(GetHeaderBookDtoInput dto)
         {
             var user = await _authen.AuthenticationAsync(dto.token);
@@ -363,11 +354,11 @@ namespace LibraryManagement.Repository
             }
             else
             {
-                var likeBook = new LikedHeaderBook
+                var likeBook = new FavoriteBook
                 {
                     IdHeaderBook = dto.IdHeaderBook,
                     IdReader = user.IdReader,
-                    LikedDay = DateTime.UtcNow
+                    createDay = DateTime.UtcNow
                 };
                 await _context.LikedHeaderBooks.AddAsync(likeBook);
                 await _context.SaveChangesAsync();

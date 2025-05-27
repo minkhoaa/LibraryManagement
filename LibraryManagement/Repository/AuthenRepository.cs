@@ -10,7 +10,6 @@ using LibraryManagement.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Validations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -28,9 +27,6 @@ namespace LibraryManagement.Repository
 
         private static readonly Guid DefaultTypeReaderId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6");
 
-
-
-
         public AuthenRepository(LibraryManagermentContext context, ITokenGenerator tokenGenerator,
             IMapper mapper, IFluentEmail email, IMemoryCache memoryCache, IConfiguration configuration)
         {
@@ -42,7 +38,7 @@ namespace LibraryManagement.Repository
             _mapper = mapper;
         }
 
-
+        // Hàm tạo id Reader
         public async Task<string> generateNextIdReaderAsync()
         {
             var nextID = await _context.Readers.OrderByDescending(id => id.IdReader).FirstOrDefaultAsync();
@@ -112,6 +108,7 @@ namespace LibraryManagement.Repository
             return true;
         }
 
+        // Hàm gửi OTP xác thực
         public async Task<bool> SendEmailConfirmation(SignUpModel signup)
         {
             var user = await _context.Readers.FirstOrDefaultAsync(x => x.ReaderUsername == signup.Email);
@@ -142,6 +139,7 @@ namespace LibraryManagement.Repository
             }
         }
 
+        // Hàm đăng nhập bằng Access Token
         public async Task<ReaderAuthenticationResponse?> AuthenticationAsync(string accessToken)
         {
             if (string.IsNullOrEmpty(accessToken)) return null;

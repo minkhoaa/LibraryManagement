@@ -3,7 +3,7 @@
 namespace LibraryManagement.Models
 {
 
-    public class CreateBook
+    public class BookWriting
     {
         [Column("id_headerbook")]
         public Guid IdHeaderBook { get; set; }

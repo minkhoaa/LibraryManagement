@@ -7,6 +7,7 @@ using LibraryManagement.Models;
 using LibraryManagement.Repository.InterFace;
 using LibraryManagement.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace LibraryManagement.Repository
 {
@@ -301,62 +302,62 @@ namespace LibraryManagement.Repository
         {
             var user = await _authen.AuthenticationAsync(dto.token);
             if (user == null) return null!;
-            var books = await _context.HeaderBooks
-                .Where(c => c.NameHeaderBook == dto.name_headerbook)
-                .GroupJoin(
-                    _context.Evaluates,
-                    ad => ad.IdHeaderBook,
-                    hd => hd.IdHeaderBook,
-                    (ad, hd) => new HeadbookAndComments
+          
+            var bookResult = await _context.HeaderBooks
+                .AsNoTracking()
+                .Where(hd => hd.NameHeaderBook == dto.name_headerbook)
+                .Include(hd => hd.Evaluates)
+                .Select(hb => new HeadbookAndComments
+                {
+                    idHeaderBook = hb.IdHeaderBook.ToString(),
+                    nameHeaderBook = hb.NameHeaderBook,
+                    describe = hb.DescribeBook,
+                    isLiked = _context.LikedHeaderBooks
+                    .Any(x => x.IdReader == user.IdReader && x.IdHeaderBook == hb.IdHeaderBook),
+                    Evaluations = hb.Evaluates
+                    .Select(e => new EvaluationDetails
                     {
-                        idHeaderBook = ad.IdHeaderBook.ToString(),
-                        nameHeaderBook = ad.NameHeaderBook, 
-                        describe = ad.DescribeBook,
-                        isLiked = _context.LikedHeaderBooks.Any(x => x.IdReader == user.IdReader && x.IdHeaderBook == ad.IdHeaderBook),
+                        IdEvaluation = e.IdEvaluate,
+                        IdReader = e.IdReader,
+                        Comment = e.EvaComment,
+                        Rating = e.EvaStar,
+                        Create_Date = e.CreateDate
+                    })
+                .OrderByDescending(e => e.Create_Date) // Sắp xếp theo ngày tạo
+                .ToList()
+                }).ToListAsync();
 
-                        Evaluations = _context.Evaluates.Where(a => a.IdHeaderBook == ad.IdHeaderBook).Select(k =>
-                            new EvaluationDetails
-                            {
-                                IdEvaluation = k.IdEvaluate,
-                                IdReader = k.IdReader,
-                                Comment = k.EvaComment,
-                                Rating = k.EvaStar, 
-                                Create_Date = k.CreateDate
-                            }
-                        ).ToList()
-                    }).ToListAsync();
-
-            return books;
+            return bookResult ;
         }
 
         public async Task<List<HeadbookAndComments>> getAllHeaderbookandComments(string token)
         {
             var user = await _authen.AuthenticationAsync(token);
             if (user == null) return null!;
-            var books = await _context.HeaderBooks
-                .GroupJoin(
-                    _context.Evaluates,
-                    ad => ad.IdHeaderBook,
-                    hd => hd.IdHeaderBook,
-                    (ad, hd) => new HeadbookAndComments
-                    {
-                        idHeaderBook = ad.IdHeaderBook.ToString(),
-                        nameHeaderBook = ad.NameHeaderBook,
-                        describe = ad.DescribeBook,
-                        isLiked = _context.LikedHeaderBooks.Any(x => x.IdReader == user.IdReader && x.IdHeaderBook == ad.IdHeaderBook),
-                        Evaluations = _context.Evaluates.Where(a => a.IdHeaderBook == ad.IdHeaderBook).Select(k =>
-                            new EvaluationDetails
-                            {
-                                IdEvaluation = k.IdEvaluate,
-                                IdReader = k.IdReader,
-                                Comment = k.EvaComment,
-                                Rating = k.EvaStar,
-                                Create_Date = k.CreateDate
-                            }
-                        ).ToList()
-                    }).ToListAsync();
+            var bookResult = await _context.HeaderBooks
+                 .AsNoTracking()
+                 .Include(hd => hd.Evaluates)
+                 .Select(hb => new HeadbookAndComments
+                 {
+                     idHeaderBook = hb.IdHeaderBook.ToString(),
+                     nameHeaderBook = hb.NameHeaderBook,
+                     describe = hb.DescribeBook,
+                     isLiked = _context.LikedHeaderBooks
+                     .Any(x => x.IdReader == user.IdReader && x.IdHeaderBook == hb.IdHeaderBook),
+                     Evaluations = hb.Evaluates
+                     .Select(e => new EvaluationDetails
+                     {
+                         IdEvaluation = e.IdEvaluate,
+                         IdReader = e.IdReader,
+                         Comment = e.EvaComment,
+                         Rating = e.EvaStar,
+                         Create_Date = e.CreateDate
+                     })
+                 .OrderByDescending(e => e.Create_Date) // Sắp xếp theo ngày tạo
+                 .ToList()
+                 }).ToListAsync();
 
-            return books;
+            return bookResult;
         }
         public async Task<List<EvaluationDetails>> getBooksEvaluation(EvaluationDetailInput dto)
         {

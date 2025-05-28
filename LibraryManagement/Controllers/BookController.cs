@@ -48,12 +48,18 @@ namespace LibraryManagement.Controllers
         }
 
         [HttpPost("getBookAndComments")]
-        public async Task<IActionResult> getBooksAndComments([FromBody] GetHeaderBookDtoInput dto)
+        public async Task<IActionResult> getBooksAndComments([FromBody] string token)
         {
-            var result = await _bookService.getHeaderbookandCommentsByid(dto);
+            var result = await _bookService.getAllHeaderbookandComments(token);
             return Ok(result);
         }
-        [HttpPost("getEvaluation")]
+        [HttpPost("getBookAndCommentsByid")]
+        public async Task<IActionResult> getBooksAndCommentbyId([FromBody] GetHeaderBookDtoInput dto)
+        {
+            var result = await _bookService.getHeaderbookandCommentsByid(dto);
+            return Ok(result); 
+        }
+            [HttpPost("getEvaluation")]
 
         public async Task<IActionResult> getDetailedEvaluation(EvaluationDetailInput dto)
         {

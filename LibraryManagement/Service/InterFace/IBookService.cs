@@ -2,11 +2,6 @@
 using LibraryManagement.Dto.Response;
 using LibraryManagement.Helpers;
 
-using LibraryManagement.Models;
-using Microsoft.Extensions.Primitives;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-
 
 namespace LibraryManagement.Repository.InterFace
 {

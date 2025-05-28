@@ -2,6 +2,7 @@
 {
     public class BooKReceiptResponse
     {
+        public Guid IdBookReceipt { get; set; }
         public DateTime ReceivedDate { get; set; }
         public List<DetailBookReceiptResponse> listDetailsResponse { get; set; }
     }

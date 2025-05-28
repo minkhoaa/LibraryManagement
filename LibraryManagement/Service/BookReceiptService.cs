@@ -85,9 +85,9 @@ namespace LibraryManagement.Repository
                 _context.HeaderBooks.Add(headerBook);
                 await _context.SaveChangesAsync();
 
-                if (request.headerBook.IdAuthors != null && request.headerBook.IdAuthors.Any()) // Duyệt qua danh sách tác giả
+                if (request.headerBook.Authors != null && request.headerBook.Authors.Any()) // Duyệt qua danh sách tác giả
                 {
-                    foreach (var authorId in request.headerBook.IdAuthors)
+                    foreach (var authorId in request.headerBook.Authors)
                     {
                         var createBook = new BookWriting
                         {
@@ -162,6 +162,7 @@ namespace LibraryManagement.Repository
 
             var response = new BooKReceiptResponse
             {
+                IdBookReceipt = bookReceipt.IdBookReceipt,
                 ReceivedDate = bookReceipt.ReceivedDate,
                 listDetailsResponse = detailResponses
             };

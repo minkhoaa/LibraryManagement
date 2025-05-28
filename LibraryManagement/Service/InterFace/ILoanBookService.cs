@@ -6,7 +6,7 @@ namespace LibraryManagement.Repository.InterFace
 {
     public interface ILoanBookService
     {
-        Task<ApiResponse<LoanBookResponse>> addLoanBookAsync(LoanSlipBookRequest request);
+        Task<ApiResponse<LoanBookResponse>> addLoanBookAsync(LoanBookRequest request);
         Task<ApiResponse<string>> deleteLoanBookAsync(Guid idLoanSlipBook);
 
         Task<List<LoanSlipBookResponse>> getListLoanSlipBook(string token);

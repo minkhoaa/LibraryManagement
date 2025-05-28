@@ -22,7 +22,8 @@ namespace LibraryManagement.Repository
                               IMapper mapper, 
                               IBookReceiptService bookReceiptRepository,
                               IUpLoadImageFileService upLoadImageFileRepository,
-                              IParameterService parameterRepository, IAuthenService authen 
+                              IParameterService parameterRepository, 
+                              IAuthenService authen
             )
         {
             _context = context;
@@ -46,6 +47,13 @@ namespace LibraryManagement.Repository
             var headerBook = await _context.HeaderBooks.FirstOrDefaultAsync(hb => hb.NameHeaderBook == request.NameHeaderBook);
             // Tạo đầu sách
             string imageUrl = null;
+
+            var typeBook = await _context.TypeBooks.FirstOrDefaultAsync(typebook => typebook.IdTypeBook == request.IdTypeBook);
+            if (typeBook == null)
+            {
+                return ApiResponse<HeaderBookResponse>.FailResponse("Không tìm thấy loại sách phù hợp", 404);
+            }
+
             if (headerBook == null)
             {
                 headerBook = new HeaderBook
@@ -57,9 +65,9 @@ namespace LibraryManagement.Repository
                 _context.HeaderBooks.Add(headerBook);
                 await _context.SaveChangesAsync();
 
-                if (request.IdAuthors != null && request.IdAuthors.Any()) // Duyệt qua danh sách tác giả
+                if (request.Authors != null && request.Authors.Any()) // Duyệt qua danh sách tác giả
                 {
-                    foreach (var authorId in request.IdAuthors)
+                    foreach (var authorId in request.Authors)
                     {
                         var bookWriting = new BookWriting
                         {
@@ -115,23 +123,30 @@ namespace LibraryManagement.Repository
             _context.TheBooks.Add(theBook);
             await _context.SaveChangesAsync();
 
+            
             // Ánh xạ response
             var response = new HeaderBookResponse
             {
-                IdTypeBook = headerBook.IdTypeBook,
+                TypeBook = new TypeBookResponse
+                {
+                    IdTypeBook = typeBook.IdTypeBook,
+                    NameTypeBook = typeBook.NameTypeBook
+                },
                 NameHeaderBook = headerBook.NameHeaderBook,
                 DescribeBook = headerBook.DescribeBook,
-                IdAuthors = request.IdAuthors,
+                Authors = request.Authors,
                 BookImage = imageUrl,
 
                 bookResponse = new BookResponse
                 {
+                    IdBook = book.IdBook,
                     Publisher = book.Publisher,
                     ReprintYear = book.ReprintYear,
                     ValueOfBook = book.ValueOfBook,
                 },
                 thebookReponse = new TheBookResponse
                 {
+                    IdTheBook = theBook.IdTheBook,
                     Status = theBook.Status
                 }
             };
@@ -197,6 +212,12 @@ namespace LibraryManagement.Repository
                 return ApiResponse<HeaderBookResponse>.FailResponse("Không tìm thấy sách", 404);
             }
 
+            var typeBook = await _context.TypeBooks.FirstOrDefaultAsync(typebook => typebook.IdTypeBook == request.IdTypeBook);
+            if (typeBook == null)
+            {
+                return ApiResponse<HeaderBookResponse>.FailResponse("Không tìm thấy loại sách phù hợp", 404);
+            }
+
             var headerBook = await _context.HeaderBooks.FirstOrDefaultAsync(hb => hb.NameHeaderBook == request.NameHeaderBook);
             // Tạo đầu sách
             if (headerBook == null)
@@ -246,19 +267,25 @@ namespace LibraryManagement.Repository
             // Ánh xạ response
             var response = new HeaderBookResponse
             {
-                IdTypeBook = headerBook.IdTypeBook,
+                TypeBook = new TypeBookResponse
+                {
+                    IdTypeBook = typeBook.IdTypeBook,
+                    NameTypeBook = typeBook.NameTypeBook
+                },
                 NameHeaderBook = headerBook.NameHeaderBook,
                 DescribeBook = headerBook.DescribeBook,
-                IdAuthors = request.IdAuthors,
+                Authors = request.IdAuthors,
 
                 bookResponse = new BookResponse
                 {
+                    IdBook = checkBook.IdBook,
                     Publisher = checkBook.Publisher,
                     ReprintYear = checkBook.ReprintYear,
                     ValueOfBook = checkBook.ValueOfBook,
                 },
                 thebookReponse = new TheBookResponse
                 {
+                    IdTheBook = checkTheBook.IdTheBook,
                     Status = checkTheBook.Status
                 }
             };

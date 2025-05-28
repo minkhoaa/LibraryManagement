@@ -6,7 +6,7 @@
         public Guid IdTypeBook { get; set; }
         public string NameHeaderBook { get; set; }
         public string DescribeBook { get; set; }
-        public List<Guid> IdAuthors { get; set; }
+        public List<Guid> Authors { get; set; }
         public IFormFile BookImage { get; set; }
         public BookCreateRequest bookCreateRequest { get; set; }
 

@@ -2,6 +2,7 @@
 {
     public class TypeBookResponse
     {
+        public Guid IdTypeBook { get; set; }
         public string NameTypeBook { get; set; }
     }
 }

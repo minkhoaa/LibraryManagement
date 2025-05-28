@@ -93,6 +93,7 @@ namespace LibraryManagement.Repository
             }
 
             var readerResponse = _mapper.Map<ReaderResponse>(newReader);
+            readerResponse.IdReader = newReader.IdReader;
             readerResponse.UrlAvatar = imageUrl;
             return ApiResponse<ReaderResponse>.SuccessResponse("Thêm độc giả thành công", 201, readerResponse);
         }
@@ -161,6 +162,7 @@ namespace LibraryManagement.Repository
             await _context.SaveChangesAsync();
 
             var readerResponse = _mapper.Map<ReaderResponse>(updateReader);
+            readerResponse.IdReader = updateReader.IdReader;
             readerResponse.UrlAvatar = imageUrl;
             return ApiResponse<ReaderResponse>.SuccessResponse("Thay đổi thông tin độc giả thành công", 200, readerResponse);
         }

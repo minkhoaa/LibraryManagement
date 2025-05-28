@@ -26,7 +26,7 @@ namespace LibraryManagement.Repository
         }
 
         // Tạo phiếu mượn sách
-        public async Task<ApiResponse<LoanBookResponse>> addLoanBookAsync(LoanSlipBookRequest request)
+        public async Task<ApiResponse<LoanBookResponse>> addLoanBookAsync(LoanBookRequest request)
         {
             // Các quy định
             int cardExpirationMonths = await _parameterRepository.getValueAsync("CardExpirationDate");
@@ -56,7 +56,7 @@ namespace LibraryManagement.Repository
             // Kiểm tra thẻ độc giả còn hạn hay không
             DateTime cardIssueDate = reader.CreateDate;
             DateTime cardExpirationDate = cardIssueDate.AddMonths(cardExpirationMonths);
-            if (cardExpirationDate < DateTime.Now)
+            if (cardExpirationDate < DateTime.UtcNow)
             {
                 return ApiResponse<LoanBookResponse>.FailResponse("Thẻ độc giả đã quá hạn 6 tháng", 400);
             }
@@ -67,30 +67,75 @@ namespace LibraryManagement.Repository
                 .Where(l => l.IdReader == request.IdReader && l.BorrowDate >= dateThreshold)
                 .CountAsync();
 
+
             if (borrowedInPeriod >= borrowingLimit)
             {
                 return ApiResponse<LoanBookResponse>.FailResponse($"Trong {borrowingPeriodDays} ngày gần nhất, độc giả đã mượn tối đa {borrowingLimit} cuốn sách", 400);
             }
 
-            // Tạo phiếu mượn sách
+            DateTime borrowDate = DateTime.SpecifyKind(DateTime.UtcNow.Date, DateTimeKind.Utc);
+            DateTime returnDate = borrowDate.AddDays(borrowingPeriodDays);
+
             var loanBook = new LoanSlipBook
             {
                 IdTheBook = request.IdTheBook,
                 IdReader = request.IdReader,
-                BorrowDate = DateTime.UtcNow,
+                BorrowDate = borrowDate,
+                ReturnDate = returnDate
             };
+
             _context.LoanSlipBooks.Add(loanBook);
             theBook.Status = "Đã mượn";
             _context.TheBooks.Update(theBook);
 
             await _context.SaveChangesAsync();
 
+            // Lấy TheBook cùng Book, HeaderBook, TypeBook
+            var theBookWithDetails = await _context.TheBooks
+                .Include(thebook => thebook.Book)
+                    .ThenInclude(book => book.HeaderBook)
+                        .ThenInclude(headerbook => headerbook.TypeBook)
+                .FirstOrDefaultAsync(thebook => thebook.IdTheBook == request.IdTheBook);
+
+            if (theBookWithDetails == null)
+            {
+                return ApiResponse<LoanBookResponse>.FailResponse("Không tìm thấy thông tin chi tiết của cuốn sách", 404);
+            }
+
+            // Lấy HeaderBook
+            var headerBook = theBookWithDetails.Book.HeaderBook;
+
+            // Lấy danh sách tác giả
+            var authors = await _context.BookWritings
+                .Where(bw => bw.IdHeaderBook == headerBook.IdHeaderBook)
+                .Select(bw => new AuthorInLoanBookResponse
+                {
+                    IdAuthor = bw.Author.IdAuthor,
+                    NameAuthor = bw.Author.NameAuthor
+                })
+                .ToListAsync();
+
             var response = new LoanBookResponse
             {
                 IdLoanSlipBook = loanBook.IdLoanSlipBook,
-                IdReader = loanBook.IdReader,
-                IdTheBook = loanBook.IdTheBook,
-                BorrowDate = loanBook.ReturnDate
+                BookResponse = new TheBookInLoanBookResponse
+                {
+                    IdTheBook = theBookWithDetails.IdTheBook,
+                    NameHeaderBook = headerBook.NameHeaderBook,
+                    TypeBook = new TypeBookResponse
+                    {
+                        IdTypeBook = headerBook.TypeBook.IdTypeBook,
+                        NameTypeBook = headerBook.TypeBook.NameTypeBook
+                    },
+                    Authors = authors,
+                },
+                readerResponse = new ReaderInLoanBookResponse
+                {
+                    IdReader = reader.IdReader,
+                    NameReader = reader.NameReader
+                },
+                BorrowDate = loanBook.BorrowDate,
+                ReturnDate = loanBook.ReturnDate
             };
             return ApiResponse<LoanBookResponse>.SuccessResponse("Tạo phiếu mượn thành công", 200, response);
         }
@@ -103,6 +148,15 @@ namespace LibraryManagement.Repository
             {
                 return ApiResponse<string>.FailResponse("Không tìm thấy phiếu mượn", 404);
             }
+            var theBook = await _context.TheBooks
+                .FirstOrDefaultAsync(tb => tb.IdTheBook == deleteLoanBook.IdTheBook);
+
+            if (theBook != null)
+            {
+                theBook.Status = "Có sẵn";
+                _context.TheBooks.Update(theBook);
+            }
+
             _context.LoanSlipBooks.Remove(deleteLoanBook);
             await _context.SaveChangesAsync();
             return ApiResponse<string>.SuccessResponse("Đã xóa phiếu mượn sách thành công", 200, "");

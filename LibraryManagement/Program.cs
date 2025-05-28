@@ -13,6 +13,8 @@ using Sprache;
 using Microsoft.Extensions.Options;
 using CloudinaryDotNet;
 using System.Net;
+using LibraryManagement.Service.InterFace;
+using LibraryManagement.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +106,7 @@ builder.Services.AddScoped<ITypeReaderService, TypeReaderService>();
 builder.Services.AddScoped<ITypeBookService, TypeBookService>();
 builder.Services.AddScoped<IBookReceiptService, BookReceiptService>();
 builder.Services.AddScoped<ILoanBookService, LoanBookService>();
+builder.Services.AddScoped<ISlipBookService, SlipBookService>();
 builder.Services.AddScoped<IParameterService, ParameterService>();
 builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 

@@ -1,7 +1,6 @@
 ﻿using LibraryManagement.Dto.Request;
 using LibraryManagement.Dto.Response;
 using LibraryManagement.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace LibraryManagement.Repository.IRepository
 {

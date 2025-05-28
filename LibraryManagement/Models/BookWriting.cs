@@ -11,8 +11,11 @@ namespace LibraryManagement.Models
         [Column("id_author")]
         public Guid IdAuthor { get; set; }
 
-        //public HeaderBook HeaderBook { get; set; }
-        //public Author Author { get; set; }
+        [ForeignKey("IdHeaderBook")]
+        public HeaderBook HeaderBook { get; set; }
+
+        [ForeignKey("IdAuthor")]
+        public Author Author { get; set; }
     }
 
 }

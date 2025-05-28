@@ -21,6 +21,9 @@ namespace LibraryManagement.Models
         [Column("return_date")]
         public DateTime ReturnDate { get; set; }
 
+        [Column("loan_period")]
+        public int LoanPeriod { get; set; }
+
         [Column("fine_amount")]
         public decimal FineAmount { get; set; }
 

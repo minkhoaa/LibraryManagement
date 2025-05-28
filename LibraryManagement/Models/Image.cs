@@ -10,10 +10,10 @@ namespace LibraryManagement.Models
         public Guid IdImg { get; set; }
 
         [Column("id_book")]
-        public string IdBook { get; set; }
+        public string? IdBook { get; set; }
 
         [Column("id_reader")]
-        public string IdReader { get; set; }
+        public string? IdReader { get; set; }
 
         [Column("id_author")]
         public Guid? IdAuthor { get; set; }

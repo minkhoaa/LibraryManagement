@@ -9,12 +9,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using LibraryManagement.Repository.InterFace;
 using LibraryManagement.Models;
-using Sprache;
 using Microsoft.Extensions.Options;
 using CloudinaryDotNet;
 using System.Net;
 using LibraryManagement.Service.InterFace;
 using LibraryManagement.Service;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +36,7 @@ builder.Configuration["CloudinarySettings:ApiKey"] = Environment.GetEnvironmentV
 builder.Configuration["CloudinarySettings:ApiSecret"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APISECRET");
 
 
+//NpgsqlConnection.GlobalTypeMapper.MapDateTime(DateTimeKind.Utc);
 
 
 builder.Services.AddControllers();
@@ -108,6 +109,7 @@ builder.Services.AddScoped<IBookReceiptService, BookReceiptService>();
 builder.Services.AddScoped<ILoanBookService, LoanBookService>();
 builder.Services.AddScoped<ISlipBookService, SlipBookService>();
 builder.Services.AddScoped<IParameterService, ParameterService>();
+builder.Services.AddScoped<IPenaltyTicketService, PenaltyTicketService>();
 builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 

@@ -13,7 +13,6 @@ namespace LibraryManagement.Dto.Request
         public DateTime Dob { get; set; }
         public string Phone { get; set; }
         public string ReaderPassword { get; set; }
-        public decimal TotalDebt { get; set; }
         public IFormFile AvatarImage { get; set; }
     }
 }

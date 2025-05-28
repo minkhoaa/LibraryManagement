@@ -2,6 +2,7 @@
 {
     public class ReaderUpdateRequest
     {
+        public Guid IdTypeReader { get; set; }
         public string NameReader { get; set; }
         public string Sex { get; set; }
         public string Address { get; set; }

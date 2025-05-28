@@ -70,12 +70,21 @@ namespace LibraryManagement.Repository
                 imageUrl = await _upLoadImageFileRepository.UploadImageAsync(request.AvatarImage);
             }
 
-            var newReader = _mapper.Map<Reader>(request);
-
-            newReader.IdReader = await generateNextIdReaderAsync();
-            newReader.ReaderUsername = request.Email;
-            newReader.ReaderPassword = BCrypt.Net.BCrypt.HashPassword(request.ReaderPassword);
-            newReader.RoleName = AppRoles.Reader;
+            var newReader = new Reader
+            {
+                IdReader = await generateNextIdReaderAsync(),
+                IdTypeReader = request.IdTypeReader,
+                NameReader = request.NameReader,
+                Sex = request.Sex,
+                Address = request.Address,
+                Email = request.Email,
+                Dob = DateTime.SpecifyKind(request.Dob, DateTimeKind.Utc),
+                Phone = request.Phone,
+                CreateDate = DateTime.UtcNow,
+                ReaderUsername = request.Email,
+                ReaderPassword = BCrypt.Net.BCrypt.HashPassword(request.ReaderPassword),
+                RoleName = AppRoles.Reader
+            };
 
             _context.Readers.Add(newReader);
             await _context.SaveChangesAsync();
@@ -92,9 +101,21 @@ namespace LibraryManagement.Repository
                 await _context.SaveChangesAsync();
             }
 
-            var readerResponse = _mapper.Map<ReaderResponse>(newReader);
-            readerResponse.IdReader = newReader.IdReader;
-            readerResponse.UrlAvatar = imageUrl;
+            var readerResponse = new ReaderResponse
+            {
+                IdReader = newReader.IdReader,
+                IdTypeReader = newReader.IdTypeReader,
+                NameReader = newReader.NameReader,
+                Sex = newReader.Sex,
+                Address = newReader.Address,
+                Email = newReader.Email,
+                Dob = newReader.Dob,
+                Phone = newReader.Phone,
+                CreateDate = newReader.CreateDate,
+                ReaderAccount = newReader.ReaderUsername,
+                TotalDebt = newReader.TotalDebt,
+                UrlAvatar = imageUrl
+            };
             return ApiResponse<ReaderResponse>.SuccessResponse("Thêm độc giả thành công", 201, readerResponse);
         }
 
@@ -139,31 +160,54 @@ namespace LibraryManagement.Repository
                 imageUrl = await _upLoadImageFileRepository.UploadImageAsync(request.AvatarImage);
             }
 
-            _mapper.Map(request, updateReader);
+            updateReader.IdTypeReader = request.IdTypeReader;
+            updateReader.NameReader = request.NameReader;
+            updateReader.Sex = request.Sex;
+            updateReader.Address = request.Address;
+            updateReader.Email = request.Email;
             updateReader.Dob = DateTime.SpecifyKind(request.Dob, DateTimeKind.Utc);
+            updateReader.Phone = request.Phone;
             updateReader.ReaderUsername = request.Email;
-            await _context.SaveChangesAsync();
-
-            // Kiểm tra độc giả có avt chưa
-            var existingAvatar = await _context.Images.FirstOrDefaultAsync(av => av.IdReader == updateReader.IdReader);
-            if (existingAvatar != null)
+            if (!string.IsNullOrEmpty(request.ReaderPassword))
             {
-                existingAvatar.Url = imageUrl;
-                _context.Images.Update(existingAvatar);
-            } else // Chưa có
-            {
-                var image = new Image
-                {
-                    IdReader = updateReader.IdReader,
-                    Url = imageUrl,
-                };
-                _context.Images.Update(image);
+                updateReader.ReaderPassword = BCrypt.Net.BCrypt.HashPassword(request.ReaderPassword);
             }
-            await _context.SaveChangesAsync();
 
-            var readerResponse = _mapper.Map<ReaderResponse>(updateReader);
-            readerResponse.IdReader = updateReader.IdReader;
-            readerResponse.UrlAvatar = imageUrl;
+            // Cập nhật hoặc thêm mới ảnh nếu có ảnh mới
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                var existingAvatar = await _context.Images.FirstOrDefaultAsync(av => av.IdReader == updateReader.IdReader);
+                if (existingAvatar != null)
+                {
+                    existingAvatar.Url = imageUrl;
+                    _context.Images.Update(existingAvatar);
+                }
+                else
+                {
+                    var image = new Image
+                    {
+                        IdReader = updateReader.IdReader,
+                        Url = imageUrl,
+                    };
+                    _context.Images.Add(image);
+                }
+            }
+
+            var readerResponse = new ReaderResponse
+            {
+                IdReader = updateReader.IdReader,
+                IdTypeReader = updateReader.IdTypeReader,
+                NameReader = updateReader.NameReader,
+                Sex = updateReader.Sex,
+                Address = updateReader.Address,
+                Email = updateReader.Email,
+                Dob = updateReader.Dob,
+                Phone = updateReader.Phone,
+                CreateDate = updateReader.CreateDate,
+                ReaderAccount = updateReader.ReaderUsername,
+                TotalDebt = updateReader.TotalDebt,
+                UrlAvatar = imageUrl
+            };
             return ApiResponse<ReaderResponse>.SuccessResponse("Thay đổi thông tin độc giả thành công", 200, readerResponse);
         }
 

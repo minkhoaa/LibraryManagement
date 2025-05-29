@@ -37,121 +37,140 @@ namespace LibraryManagement.Repository
         // Hàm thêm mới đầu sách
         public async Task<ApiResponse<HeaderBookResponse>> addBookAsync(HeaderBookCreationRequest request)
         {
-            // Quy định khoảng cách năm xuất bản
-            int publishBookGap = DateTime.Now.Year - request.bookCreateRequest.ReprintYear;
-            int publishGap = await _parameterRepository.getValueAsync("PublishGap");
-            if (publishBookGap > publishGap)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                return ApiResponse<HeaderBookResponse>.FailResponse($"Khoảng cách năm xuất bản phải nhỏ hơn {publishGap}", 400);
-            }
 
-            var headerBook = await _context.HeaderBooks.FirstOrDefaultAsync(hb => hb.NameHeaderBook == request.NameHeaderBook);
-            // Tạo đầu sách
-            string imageUrl = null;
-
-            var typeBook = await _context.TypeBooks.FirstOrDefaultAsync(typebook => typebook.IdTypeBook == request.IdTypeBook);
-            if (typeBook == null)
-            {
-                return ApiResponse<HeaderBookResponse>.FailResponse("Không tìm thấy loại sách phù hợp", 404);
-            }
-
-            if (headerBook == null)
-            {
-                headerBook = new HeaderBook
+                // Quy định khoảng cách năm xuất bản
+                int publishBookGap = DateTime.Now.Year - request.bookCreateRequest.ReprintYear;
+                int publishGap = await _parameterRepository.getValueAsync("PublishGap");
+                if (publishBookGap > publishGap)
                 {
-                    IdTypeBook = request.IdTypeBook,
-                    NameHeaderBook = request.NameHeaderBook,
-                    DescribeBook = request.DescribeBook,
-                };
-                _context.HeaderBooks.Add(headerBook);
-                await _context.SaveChangesAsync();
+                    return ApiResponse<HeaderBookResponse>.FailResponse($"Khoảng cách năm xuất bản phải nhỏ hơn {publishGap}", 400);
+                }
 
-                if (request.Authors != null && request.Authors.Any()) // Duyệt qua danh sách tác giả
+
+                // Tạo đầu sách
+                string imageUrl = null;
+
+                var typeBookTask = _context.TypeBooks.AsNoTracking()
+             .FirstOrDefaultAsync(typebook => typebook.IdTypeBook == request.IdTypeBook);
+                var headerBookTask = _context.HeaderBooks
+                    .FirstOrDefaultAsync(hb => hb.NameHeaderBook == request.NameHeaderBook);
+
+                await Task.WhenAll(typeBookTask, headerBookTask);
+                var typeBook = await typeBookTask;
+                var headerBook = await headerBookTask;
+                if (typeBook == null)
                 {
-                    foreach (var authorId in request.Authors)
+                    return ApiResponse<HeaderBookResponse>.FailResponse("Không tìm thấy loại sách phù hợp", 404);
+                }
+
+                if (headerBook == null)
+                {
+                    headerBook = new HeaderBook
                     {
-                        var bookWriting = new BookWriting
+                        IdTypeBook = request.IdTypeBook,
+                        NameHeaderBook = request.NameHeaderBook,
+                        DescribeBook = request.DescribeBook,
+                    };
+                    _context.HeaderBooks.Add(headerBook);
+                    await _context.SaveChangesAsync();
+
+                    if (request.Authors != null && request.Authors.Any()) // Duyệt qua danh sách tác giả
+                    {
+                        foreach (var authorId in request.Authors)
                         {
-                            IdHeaderBook = headerBook.IdHeaderBook,
-                            IdAuthor = authorId
-                        };
-                        _context.BookWritings.Add(bookWriting); // Nạp dữ liệu vào bảng sáng tác
+                            var bookWriting = new BookWriting
+                            {
+                                IdHeaderBook = headerBook.IdHeaderBook,
+                                IdAuthor = authorId
+                            };
+                            _context.BookWritings.Add(bookWriting); // Nạp dữ liệu vào bảng sáng tác
+                        }
                     }
                 }
-            }
-            else
-            {
-                headerBook.DescribeBook = request.DescribeBook; // Luôn cập nhật Describe của Book
-                _context.HeaderBooks.Update(headerBook);
-                await _context.SaveChangesAsync();
-            }
-
-            // Tạo sách
-            // Chuỗi url ảnh từ cloudinary
-            if (request.BookImage != null)
-            {
-                imageUrl = await _upLoadImageFileRepository.UploadImageAsync(request.BookImage);
-            }
-            var book = new Book
-            {
-                IdBook = await _bookReceiptRepository.generateNextIdBookAsync(),
-                IdHeaderBook = headerBook.IdHeaderBook,
-                Publisher = request.bookCreateRequest.Publisher,
-                ReprintYear = request.bookCreateRequest.ReprintYear,
-                ValueOfBook = request.bookCreateRequest.ValueOfBook
-            };
-            _context.Books.Add(book);
-            await _context.SaveChangesAsync();
-            // Lưu ảnh sách vào bảng image nếu có
-            if (!string.IsNullOrEmpty(imageUrl))
-            {
-                var image = new Image
+                else
                 {
-                    IdBook = book.IdBook,
-                    Url = imageUrl,
-                };
-                _context.Images.Add(image);
-                await _context.SaveChangesAsync();
-            }
-
-            // Tạo cuốn sách
-            var theBook = new TheBook
-            {
-                IdTheBook = await _bookReceiptRepository.generateNextIdTheBookAsync(),
-                IdBook = book.IdBook,
-                Status = "Có sẵn"
-            };
-            _context.TheBooks.Add(theBook);
-            await _context.SaveChangesAsync();
-
-            
-            // Ánh xạ response
-            var response = new HeaderBookResponse
-            {
-                TypeBook = new TypeBookResponse
-                {
-                    IdTypeBook = typeBook.IdTypeBook,
-                    NameTypeBook = typeBook.NameTypeBook
-                },
-                NameHeaderBook = headerBook.NameHeaderBook,
-                DescribeBook = headerBook.DescribeBook,
-                Authors = request.Authors,
-                BookImage = imageUrl,
-
-                bookResponse = new BookResponse
-                {
-                    IdBook = book.IdBook,
-                    Publisher = book.Publisher,
-                    ReprintYear = book.ReprintYear,
-                    ValueOfBook = book.ValueOfBook,
-                },
-                thebookReponse = new TheBookResponse
-                {
-                    IdTheBook = theBook.IdTheBook,
-                    Status = theBook.Status
+                    headerBook.DescribeBook = request.DescribeBook; // Luôn cập nhật Describe của Book
+                    _context.HeaderBooks.Update(headerBook);
+                    await _context.SaveChangesAsync();
                 }
-            };
-            return ApiResponse<HeaderBookResponse>.SuccessResponse("Tạo sách thành công", 201, response);
+
+                // Tạo sách
+                // Chuỗi url ảnh từ cloudinary
+                if (request.BookImage != null)
+                {
+                    imageUrl = await _upLoadImageFileRepository.UploadImageAsync(request.BookImage);
+                }
+                var book = new Book
+                {
+                    IdBook = await _bookReceiptRepository.generateNextIdBookAsync(),
+                    IdHeaderBook = headerBook.IdHeaderBook,
+                    Publisher = request.bookCreateRequest.Publisher,
+                    ReprintYear = request.bookCreateRequest.ReprintYear,
+                    ValueOfBook = request.bookCreateRequest.ValueOfBook
+                };
+                _context.Books.Add(book);
+                await _context.SaveChangesAsync();
+                // Lưu ảnh sách vào bảng image nếu có
+                if (!string.IsNullOrEmpty(imageUrl))
+                {
+                    var image = new Image
+                    {
+                        IdBook = book.IdBook,
+                        Url = imageUrl,
+                    };
+                    _context.Images.Add(image);
+                    await _context.SaveChangesAsync();
+                }
+
+                // Tạo cuốn sách
+                var theBook = new TheBook
+                {
+                    IdTheBook = await _bookReceiptRepository.generateNextIdTheBookAsync(),
+                    IdBook = book.IdBook,
+                    Status = "Có sẵn"
+                };
+                _context.TheBooks.Add(theBook);
+                await _context.SaveChangesAsync();
+
+
+                // Ánh xạ response
+                var response = new HeaderBookResponse
+                {
+                    TypeBook = new TypeBookResponse
+                    {
+                        IdTypeBook = typeBook.IdTypeBook,
+                        NameTypeBook = typeBook.NameTypeBook
+                    },
+                    NameHeaderBook = headerBook.NameHeaderBook,
+                    DescribeBook = headerBook.DescribeBook,
+                    Authors = request.Authors,
+                    BookImage = imageUrl,
+
+                    bookResponse = new BookResponse
+                    {
+                        IdBook = book.IdBook,
+                        Publisher = book.Publisher,
+                        ReprintYear = book.ReprintYear,
+                        ValueOfBook = book.ValueOfBook,
+                    },
+                    thebookReponse = new TheBookResponse
+                    {
+                        IdTheBook = theBook.IdTheBook,
+                        Status = theBook.Status
+                    }
+                };
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return ApiResponse<HeaderBookResponse>.SuccessResponse("Tạo sách thành công", 201, response);
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         // Hàm xóa sách
@@ -229,7 +248,7 @@ namespace LibraryManagement.Repository
                     NameHeaderBook = request.NameHeaderBook,
                     DescribeBook = request.DescribeBook,
                 };
-                _context.HeaderBooks.Add(headerBook);
+                await _context.HeaderBooks.AddAsync(headerBook);
                 await _context.SaveChangesAsync();
 
                 if (request.IdAuthors != null && request.IdAuthors.Any()) // Duyệt qua danh sách tác giả
@@ -241,7 +260,7 @@ namespace LibraryManagement.Repository
                             IdHeaderBook = headerBook.IdHeaderBook,
                             IdAuthor = authorId
                         };
-                        _context.BookWritings.Add(createBook); // Nạp dữ liệu vào bảng sáng tác
+                        await _context.BookWritings.AddAsync(createBook); // Nạp dữ liệu vào bảng sáng tác
                     }
                 }
             }else
@@ -365,7 +384,7 @@ namespace LibraryManagement.Repository
             var role = await _authen.UserRoleCheck(dto.token);
             if (role != 0) return null!;
             if (user == null) return null!;
-            var result = await _context.Evaluates.Where(x => x.IdHeaderBook == dto.IdHeaderBook).Select(a => new EvaluationDetails
+            var result = await _context.Evaluates.AsNoTracking().Where(x => x.IdHeaderBook == dto.IdHeaderBook).Take(50).Select(a => new EvaluationDetails
             {
                 IdEvaluation = a.IdEvaluate,
                 IdReader = a.IdReader,
@@ -407,39 +426,27 @@ namespace LibraryManagement.Repository
             var user = await _authen.AuthenticationAsync(token);
             if (user == null) return null!;
 
-            var likedPost = await _context.LikedHeaderBooks
+            var likedPosts = await _context.LikedHeaderBooks
+                .AsNoTracking()
                 .Where(x => x.IdReader == user.IdReader)
-                .Join(_context.HeaderBooks,
-                lhb => lhb.IdHeaderBook,
-                hd => hd.IdHeaderBook,
-                (lhb, hd) => new { lhb, hd })
-                .Join(_context.Readers,
-                rd => rd.lhb.IdReader,
-                r => r.IdReader,
-                (rd, r) => new
+                .Include(x => x.headerBook)
+                .ThenInclude(a => a.Evaluates)
+                .Select(lhb => new HeadbookAndComments
                 {
-                    rd.lhb,
-                    rd.hd,
-                    Reader = r
-                }
-                ).Select(a => new HeadbookAndComments
-                {
-                    idHeaderBook = a.hd.IdHeaderBook.ToString(),
-                    nameHeaderBook = a.hd.NameHeaderBook,
-                    describe = a.hd.DescribeBook,
-                    isLiked = _context.LikedHeaderBooks.Any(g => g.IdReader == user.IdReader && g.IdHeaderBook == a.hd.IdHeaderBook),
-                    Evaluations = _context.Evaluates.Where(j => j.IdHeaderBook == a.hd.IdHeaderBook).Select(k =>
-                           new EvaluationDetails
-                           {
-                               IdEvaluation = k.IdEvaluate,
-                               IdReader = k.IdReader,
-                               Comment = k.EvaComment,
-                               Rating = k.EvaStar,
-                               Create_Date = k.CreateDate
-                           }
-                        ).ToList()
+                    idHeaderBook = lhb.headerBook.IdHeaderBook.ToString(),
+                    nameHeaderBook = lhb.headerBook.NameHeaderBook,
+                    describe = lhb.headerBook.DescribeBook,
+                    isLiked = true,
+                    Evaluations = lhb.headerBook.Evaluates.Select(e => new EvaluationDetails
+                    {
+                        IdEvaluation = e.IdEvaluate,
+                        IdReader = e.IdReader,
+                        Comment = e.EvaComment,
+                        Rating = e.EvaStar,
+                        Create_Date = e.CreateDate
+                    }).ToList()
                 }).ToListAsync();
-            return likedPost;
+            return likedPosts;
         }
 
         public async Task<bool> DeleteEvaluation(DeleteEvaluationInput dto)

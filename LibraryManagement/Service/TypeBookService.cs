@@ -46,17 +46,15 @@ namespace LibraryManagement.Repository
         public async Task<List<TypeBookResponseAndBook>> getTypebookAndBooks()
         {
             var result = await _context.TypeBooks
-            .Join(
-                _context.HeaderBooks,
-                hd => hd.IdTypeBook,
-                ad => ad.IdTypeBook,
-                (hd, ad) => new { TypeBook = hd, HeaderBook = ad }
-                ).Select(x => new TypeBookResponseAndBook
-                {
-                    IdHeaderBook = x.HeaderBook.IdHeaderBook.ToString(),
-                    IDTypeBook = x.TypeBook.IdTypeBook.ToString()
-                })
-                .ToListAsync();
+                 .AsNoTracking()
+                 .Include(typebook => typebook.HeaderBooks)
+                 .SelectMany(tb => tb.HeaderBooks.Select(hb => new TypeBookResponseAndBook
+                 {
+                     IdHeaderBook = hb.IdHeaderBook.ToString(),
+                     NameHeaderBook = hb.NameHeaderBook.ToString(),
+                     IDTypeBook = tb.IdTypeBook.ToString()
+                 }))
+             .ToListAsync();
             return result; 
         }
 

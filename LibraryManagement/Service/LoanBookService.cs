@@ -162,6 +162,9 @@ namespace LibraryManagement.Repository
             return ApiResponse<string>.SuccessResponse("Đã xóa phiếu mượn sách thành công", 200, "");
         }
 
+        // Sửa phiếu mượn sách
+
+
         public async Task<List<LoanSlipBookResponse>> getListLoanSlipBook(string token)
         {
             var user = await _account.AuthenticationAsync(token);

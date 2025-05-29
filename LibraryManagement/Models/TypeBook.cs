@@ -14,6 +14,7 @@ namespace LibraryManagement.Models
 
         public ICollection<HeaderBook> HeaderBooks { get; set; }
         public ICollection<Author> Authors { get; set; }
+        public ICollection<CategoryReportDetail> CategoryReportDetails { get; set; }
     }
 
 }

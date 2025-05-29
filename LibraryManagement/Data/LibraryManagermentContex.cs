@@ -49,7 +49,7 @@ namespace LibraryManagement.Data
             modelBuilder.Entity<LoanSlipBook>().ToTable("loan_slipbook");
             modelBuilder.Entity<PenaltyTicket>().ToTable("penalty_ticket");
             modelBuilder.Entity<CategoryReport>().ToTable("category_report");
-            modelBuilder.Entity<CategoryReportDetail>().ToTable("categoty_reportdetail");
+            modelBuilder.Entity<CategoryReportDetail>().ToTable("category_reportdetail");
             modelBuilder.Entity<OverdueReport>().ToTable("overdue_report");
             modelBuilder.Entity<Image>().ToTable("image");
             modelBuilder.Entity<Evaluate>().ToTable("evaluate");

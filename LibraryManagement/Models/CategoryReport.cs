@@ -6,9 +6,15 @@ namespace LibraryManagement.Models
     public class CategoryReport
     {
         [Key]
+        [Column("id_categoryreport")]
         public Guid IdCategoryReport { get; set; }
-        public int MonthReport { get; set; }
-        public int TotalBorrowCount { get; set; }
-    }
 
+        [Column("month_report")]
+        public int MonthReport { get; set; }
+
+        [Column("total_borrowcount")]
+        public int TotalBorrowCount { get; set; }
+
+        public ICollection<CategoryReportDetail> CategoryReportDetails { get; set; }
+    }
 }

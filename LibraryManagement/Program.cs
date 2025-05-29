@@ -15,6 +15,7 @@ using System.Net;
 using LibraryManagement.Service.InterFace;
 using LibraryManagement.Service;
 using Npgsql;
+using LibraryManagement.Service.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -110,6 +111,7 @@ builder.Services.AddScoped<ILoanBookService, LoanBookService>();
 builder.Services.AddScoped<ISlipBookService, SlipBookService>();
 builder.Services.AddScoped<IParameterService, ParameterService>();
 builder.Services.AddScoped<IPenaltyTicketService, PenaltyTicketService>();
+builder.Services.AddScoped<ICategoryReportService, CategoryReportService>();
 builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 

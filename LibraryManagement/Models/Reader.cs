@@ -52,7 +52,6 @@ namespace LibraryManagement.Models
         [ForeignKey("RoleName")]
         public Role Role { get; set; }
 
-
         public ICollection<FavoriteBook> likedHeaderBooks { get; set; }
     }
 

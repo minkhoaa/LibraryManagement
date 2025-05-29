@@ -41,15 +41,6 @@ namespace LibraryManagement.Service
             DateTime scheduledReturnDate = DateTime.SpecifyKind(loanbook.ReturnDate, DateTimeKind.Utc);
             DateTime actualReturnDate = DateTime.UtcNow;
 
-            Console.WriteLine($"borrowDate = {borrowDate}");
-            Console.WriteLine($"scheduledReturnDate = {scheduledReturnDate}");
-            Console.WriteLine($"actualReturnDate = {actualReturnDate}");
-            Console.WriteLine($"borrowDate Kind = {borrowDate.Kind}");  // Unspecified, Local hoặc Utc
-            Console.WriteLine($"scheduledReturnDate Kind = {scheduledReturnDate.Kind}");  // Unspecified, Local hoặc Utc
-            Console.WriteLine($"actualReturnDate Kind = {actualReturnDate.Kind}");  // Unspecified, Local hoặc Utc
-
-
-
             int overdueDays = (actualReturnDate.Date - scheduledReturnDate.Date).Days;
             overdueDays = Math.Max(0, overdueDays);
 
@@ -59,7 +50,7 @@ namespace LibraryManagement.Service
             var theBook = await _context.TheBooks.FirstOrDefaultAsync(tb => tb.IdTheBook == request.IdTheBook);
             if (theBook != null)
             {
-                theBook.Status = "Chưa mượn";
+                theBook.Status = "Có sẵn";
                 _context.TheBooks.Update(theBook);
             }
 
@@ -70,14 +61,15 @@ namespace LibraryManagement.Service
                 return ApiResponse<SlipBookResponse>.FailResponse("Không tìm thấy độc giả", 404);
             }
             reader.TotalDebt += fineAmount;
-            _context.Readers.Update(reader);
+            _context.Readers.Attach(reader);
+            _context.Entry(reader).Property(r => r.TotalDebt).IsModified = true;
 
             // Cập nhật bảng LoanSlipBook
-            loanbook.BorrowDate = borrowDate;  // ensure Kind = Utc
-            loanbook.ReturnDate = actualReturnDate;  // ensure Kind = Utc
-            loanbook.LoanPeriod = overdueDays;
+            loanbook.LoanPeriod = (actualReturnDate.Date - borrowDate.Date).Days;
             loanbook.FineAmount = fineAmount;
-            _context.LoanSlipBooks.Update(loanbook);
+            _context.LoanSlipBooks.Attach(loanbook);
+            _context.Entry(loanbook).Property(l => l.LoanPeriod).IsModified = true;
+            _context.Entry(loanbook).Property(l => l.FineAmount).IsModified = true;
 
             await _context.SaveChangesAsync();
 
@@ -86,7 +78,7 @@ namespace LibraryManagement.Service
                 IdLoanSlipBook = loanbook.IdLoanSlipBook,
                 IdTheBook = request.IdTheBook,
                 BorrowDate = borrowDate,
-                ReturnDate = actualReturnDate,
+                ReturnDate = scheduledReturnDate,
                 LoanPeriod = (actualReturnDate.Date - borrowDate.Date).Days,
                 FineAmount = fineAmount,
                 readerResponse = new ReaderInSlipBookResponse

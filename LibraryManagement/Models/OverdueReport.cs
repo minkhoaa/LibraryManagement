@@ -6,13 +6,11 @@ namespace LibraryManagement.Models
     public class OverdueReport
     {
         [Key]
+        [Column("id_overduereport")]
         public Guid IdOverdueReport { get; set; }
-        public string IdTheBook { get; set; }
+
+        [Column("created_date")]
         public DateTime CreatedDate { get; set; }
-        public DateTime BorrowDate { get; set; }
-        public int LateDays { get; set; }
-
-        public TheBook TheBook { get; set; }
+        public ICollection<OverdueReportDetail> OverdueReportDetails { get; set; }
     }
-
 }

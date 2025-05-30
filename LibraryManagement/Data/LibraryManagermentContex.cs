@@ -15,6 +15,7 @@ namespace LibraryManagement.Data
         public DbSet<DetailBookReceipt> DetailBookReceipts { get; set; }
         public DbSet<LoanSlipBook> LoanSlipBooks { get; set; }
         public DbSet<OverdueReport> OverdueReports { get; set; }
+        public DbSet<OverdueReportDetail> OverdueReportDetails { get; set; }
         public DbSet<Parameter> Parameters { get; set; }
         public DbSet<TypeBook> TypeBooks { get; set; }
         public DbSet<TypeReader> TypeReaders { get; set; }
@@ -51,6 +52,7 @@ namespace LibraryManagement.Data
             modelBuilder.Entity<CategoryReport>().ToTable("category_report");
             modelBuilder.Entity<CategoryReportDetail>().ToTable("category_reportdetail");
             modelBuilder.Entity<OverdueReport>().ToTable("overdue_report");
+            modelBuilder.Entity<OverdueReportDetail>().ToTable("overdue_reportdetail");
             modelBuilder.Entity<Image>().ToTable("image");
             modelBuilder.Entity<Evaluate>().ToTable("evaluate");
             modelBuilder.Entity<Role>().ToTable("roles");
@@ -71,6 +73,9 @@ namespace LibraryManagement.Data
 
             modelBuilder.Entity<BookWriting>()
                 .HasKey(cb => new { cb.IdHeaderBook, cb.IdAuthor });
+
+            modelBuilder.Entity<OverdueReportDetail>()
+                .HasKey(o => new { o.IdOverdueReport, o.IdTheBook });
         }
     }
 }

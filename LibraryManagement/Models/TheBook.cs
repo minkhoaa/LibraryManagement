@@ -17,5 +17,7 @@ namespace LibraryManagement.Models
 
         [ForeignKey("IdBook")]
         public Book Book { get; set; }
+
+        public ICollection<OverdueReportDetail> OverdueReportDetails { get; set; }
     }
 }

@@ -112,6 +112,7 @@ builder.Services.AddScoped<ISlipBookService, SlipBookService>();
 builder.Services.AddScoped<IParameterService, ParameterService>();
 builder.Services.AddScoped<IPenaltyTicketService, PenaltyTicketService>();
 builder.Services.AddScoped<ICategoryReportService, CategoryReportService>();
+builder.Services.AddScoped<IOverdueReportService, OverdueReportService>();
 builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 

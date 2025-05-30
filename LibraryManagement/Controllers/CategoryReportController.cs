@@ -26,7 +26,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint xóa báo cáo thể loại theo tháng
         [HttpDelete("delete_category_report/{idCategoryReport}")]
-        public async Task<IActionResult> deleteLoanBook(Guid idCategoryReport)
+        public async Task<IActionResult> deleteCategoryReport(Guid idCategoryReport)
         {
             var result = await _categoryReportService.deleteCategoryReportAsync(idCategoryReport);
             if (result.Success)

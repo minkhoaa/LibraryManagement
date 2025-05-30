@@ -4,7 +4,7 @@
     {
         public Guid IdOverdueReport { get; set; }
         public DateTime CreatedDate { get; set; }
-        public OverdueReportDetailResponse Detail { get; set; }
+        public List<OverdueReportDetailResponse> Detail { get; set; }
     }
     public class OverdueReportDetailResponse
     {

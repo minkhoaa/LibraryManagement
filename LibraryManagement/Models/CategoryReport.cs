@@ -12,6 +12,9 @@ namespace LibraryManagement.Models
         [Column("month_report")]
         public int MonthReport { get; set; }
 
+        [Column("year_report")]
+        public int YearReport { get; set; }
+
         [Column("total_borrowcount")]
         public int TotalBorrowCount { get; set; }
 

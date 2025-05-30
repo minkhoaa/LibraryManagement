@@ -44,12 +44,32 @@ namespace LibraryManagement.Service
 
             int totalBorrowCount = borrowCounts.Sum(total => total.BorrowCount);
 
-            var categoryReport = new CategoryReport
+            // Kiểm tra nếu báo cáo đã tồn tại thì cập nhật
+            var categoryReport = await _context.CategoryReports
+                .FirstOrDefaultAsync(r => r.MonthReport == month && r.YearReport == year);
+
+            if (categoryReport != null)
             {
-                MonthReport = month,
-                TotalBorrowCount = totalBorrowCount
-            };
-            _context.CategoryReports.Add(categoryReport);
+                // Cập nhật tổng lượt mượn
+                categoryReport.TotalBorrowCount = totalBorrowCount;
+
+                // Xóa chi tiết cũ
+                var oldDetails = await _context.CategoryReportDetails
+                    .Where(d => d.IdCategoryReport == categoryReport.IdCategoryReport)
+                    .ToListAsync();
+                _context.CategoryReportDetails.RemoveRange(oldDetails);
+            }else
+            {
+                // Nếu chưa có thì tạo mới
+                categoryReport = new CategoryReport
+                {
+                    MonthReport = month,
+                    YearReport = year,
+                    TotalBorrowCount = totalBorrowCount
+                };
+                _context.CategoryReports.Add(categoryReport);
+                await _context.SaveChangesAsync();
+            }
 
             foreach (var item in borrowCounts)
             {

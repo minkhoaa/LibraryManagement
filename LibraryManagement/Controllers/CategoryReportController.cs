@@ -23,5 +23,16 @@ namespace LibraryManagement.Controllers
                 return Created("", result);
             return BadRequest(result);
         }
+
+        // Endpoint xóa báo cáo thể loại theo tháng
+        [HttpDelete("delete_category_report/{idCategoryReport}")]
+        public async Task<IActionResult> deleteLoanBook(Guid idCategoryReport)
+        {
+            var result = await _categoryReportService.deleteCategoryReportAsync(idCategoryReport);
+            if (result.Success)
+                return Ok(result);
+            return NotFound(result);
+        }
+
     }
 }

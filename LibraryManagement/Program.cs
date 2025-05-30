@@ -113,6 +113,8 @@ builder.Services.AddScoped<IParameterService, ParameterService>();
 builder.Services.AddScoped<IPenaltyTicketService, PenaltyTicketService>();
 builder.Services.AddScoped<ICategoryReportService, CategoryReportService>();
 builder.Services.AddScoped<IOverdueReportService, OverdueReportService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
 builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 

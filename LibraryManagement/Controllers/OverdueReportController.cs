@@ -1,7 +1,5 @@
 ﻿using LibraryManagement.Dto.Request;
-using LibraryManagement.Service;
 using LibraryManagement.Service.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagement.Controllers

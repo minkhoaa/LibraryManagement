@@ -13,10 +13,23 @@ namespace LibraryManagement.Helpers
     public class TokenGenerator : ITokenGenerator
     {
         private readonly IConfiguration _config;
-        public TokenGenerator(IConfiguration config)
+        private readonly LibraryManagermentContext _context;
+
+        public TokenGenerator(IConfiguration config, LibraryManagermentContext context)
         {
             _config = config;
+            _context = context;
         }
+
+        // Hàm lấy danh sách permssion theo role
+        private List<string> GetPermissionsByRole(string roleName)
+        {
+            return _context.RolePermissions
+                .Where(rp => rp.RoleName == roleName)
+                .Select(rp => rp.PermissionName)
+                .ToList();
+        }
+
         public string GenerateToken(Reader reader)
         {
             var claims = new List<Claim>
@@ -25,10 +38,18 @@ namespace LibraryManagement.Helpers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
+            var scopeList = new List<string>();
+
             if (!string.IsNullOrEmpty(reader.RoleName))
             {
-                claims.Add(new Claim(ClaimTypes.Role, reader.RoleName));
+                
+                scopeList.Add(reader.RoleName); // Thêm Role vào danh sách scope
+
+                var permissions = GetPermissionsByRole(reader.RoleName); // Lấy permission từ RolePermission
+
+                scopeList.AddRange(permissions);
             }
+            claims.Add(new Claim("scope", string.Join(" ", scopeList)));
 
             // Khóa để ký Token
             var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SecretKey"]));
@@ -45,6 +66,7 @@ namespace LibraryManagement.Helpers
             return accessTokenString;
         }
 
+
         public string GenerateRefreshToken(Reader reader)
         {
             var claims = new List<Claim>
@@ -53,10 +75,16 @@ namespace LibraryManagement.Helpers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
+            var scopeList = new List<string>();
+
             if (!string.IsNullOrEmpty(reader.RoleName))
             {
-                claims.Add(new Claim(ClaimTypes.Role, reader.RoleName));
+                scopeList.Add(reader.RoleName);
+
+                var permissions = GetPermissionsByRole(reader.RoleName);
+                scopeList.AddRange(permissions);
             }
+            claims.Add(new Claim("scope", string.Join(" ", scopeList)));
 
             // Khóa để ký Token
             var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SecretKey"]));

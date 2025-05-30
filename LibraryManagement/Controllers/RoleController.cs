@@ -19,23 +19,32 @@ namespace LibraryManagement.Controllers
 
         // Endpoint tạo role mới
         [HttpPost("add_role")]
-        public async Task<ApiResponse<RoleResponse>> addNewRole([FromBody] RoleRequest request)
+        public async Task<IActionResult> addNewRole([FromBody] RoleRequest request)
         {
-            return await _roleService.addRoleAsync(request);
+            var result = await _roleService.addRoleAsync(request);
+            if (result.Success)
+                return Created("", result);
+            return BadRequest(result);
         }
 
         // Endpoint xóa role
-        [HttpDelete("delete_role")]
-        public async Task<ApiResponse<string>> deleteRole(string RoleName)
+        [HttpDelete("delete_role/{RoleName}")]
+        public async Task<IActionResult> deleteRole(string RoleName)
         {
-            return await _roleService.deleteRoleAsync(RoleName);
+            var result = await _roleService.deleteRoleAsync(RoleName);
+            if (result.Success)
+                return Ok(result);
+            return NotFound(result);
         }
 
         // Endpoint sửa role
         [HttpPut("update_role")]
-        public async Task<ApiResponse<RoleResponse>> updateRole([FromBody] RoleRequest request)
+        public async Task<IActionResult> updateRole([FromBody] RoleRequest request)
         {
-            return await _roleService.updateRoleAsync(request);
+            var result = await _roleService.updateRoleAsync(request);
+            if (result.Success)
+                return Ok(result);
+            return NotFound(result);
         }
     }
 }

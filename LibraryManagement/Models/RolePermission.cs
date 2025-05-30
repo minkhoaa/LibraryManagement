@@ -12,7 +12,10 @@ namespace LibraryManagement.Models
         [Column("permission_name")]
         public string PermissionName { get; set; }
 
+        [ForeignKey("RoleName")]
         public Role Role { get; set; }
+
+        [ForeignKey("PermissionName")]
         public Permission Permission { get; set; }
     }
 

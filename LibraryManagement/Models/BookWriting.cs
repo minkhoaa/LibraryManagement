@@ -16,6 +16,8 @@ namespace LibraryManagement.Models
 
         [ForeignKey("IdAuthor")]
         public Author Author { get; set; }
+
+        
     }
 
 }

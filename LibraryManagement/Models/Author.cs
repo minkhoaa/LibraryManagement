@@ -23,6 +23,9 @@ namespace LibraryManagement.Models
 
         [ForeignKey("IdTypeBook")]
         public TypeBook TypeBook { get; set; }
+
+        public ICollection<BookWriting> BookWritings { get; set; }
     }
 
 }
+

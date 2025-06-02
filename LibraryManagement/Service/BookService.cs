@@ -356,11 +356,14 @@ namespace LibraryManagement.Repository
             var bookResult = await _context.HeaderBooks
                  .AsNoTracking()
                  .Include(hd => hd.Evaluates)
+                 .Include(bw=>bw.bookWritings)
+                    .ThenInclude(at => at.Author)
                  .Select(hb => new HeadbookAndComments
                  {
                      idHeaderBook = hb.IdHeaderBook.ToString(),
                      nameHeaderBook = hb.NameHeaderBook,
                      describe = hb.DescribeBook,
+                     image = hb.ImageBook,
                      isLiked = _context.LikedHeaderBooks
                      .Any(x => x.IdReader == user.IdReader && x.IdHeaderBook == hb.IdHeaderBook),
                      Evaluations = hb.Evaluates
@@ -372,8 +375,19 @@ namespace LibraryManagement.Repository
                          Rating = e.EvaStar,
                          Create_Date = e.CreateDate
                      })
+            
                  .OrderByDescending(e => e.Create_Date) // Sắp xếp theo ngày tạo
-                 .ToList()
+                 .ToList(),
+                   Authors = hb.bookWritings
+                             .Select(bw=>new AuthorResponse
+                             {
+                                 IdAuthor = bw.IdAuthor,
+                                 NameAuthor = bw.Author.NameAuthor ,
+                                 Biography = bw.Author.Biography,
+                                 Nationality = bw.Author.Nationality,
+                                 IdTypeBook = bw.Author.IdTypeBook
+                             })
+                             .ToList(),
                  }).ToListAsync();
 
             return bookResult;

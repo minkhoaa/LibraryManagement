@@ -18,11 +18,19 @@ namespace LibraryManagement.Models
         [Column("describe_book")]
         public string DescribeBook { get; set; }
 
+        [Column("image_book")]
+        public string ImageBook { get; set; } = "Trống";
+
         [ForeignKey("IdTypeBook")]
         public TypeBook TypeBook { get; set; }
+
+
+
         public ICollection<Evaluate> Evaluates { get; set; }
 
         public ICollection<FavoriteBook> likedHeaderBooks { get; set; }
+
+        public ICollection<BookWriting> bookWritings { get; set; }
     }
 
 }

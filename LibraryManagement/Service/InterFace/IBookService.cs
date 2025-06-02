@@ -19,7 +19,7 @@ namespace LibraryManagement.Repository.InterFace
 
         public Task<List<EvaluationDetails>> getBooksEvaluation(EvaluationDetailInput dto);
 
-        public Task<bool> LikeHeaderBook(EvaluationDetailInput dto);
+        public Task<bool> LikeBook(EvaluationDetailInput dto);
 
         //public Task<List<HeadbookAndComments>> getLikedHeaderBook(string token);
 

@@ -409,12 +409,12 @@ namespace LibraryManagement.Repository
             return result;
         }
 
-        public async Task<bool> LikeHeaderBook(EvaluationDetailInput dto)
+        public async Task<bool> LikeBook(EvaluationDetailInput dto)
         {
             var user = await _authen.AuthenticationAsync(dto.token);
             if (user == null) return false;
 
-            var likedBook = await _context.LikedHeaderBooks.Where(x => x.IdReader == user.IdReader && x.IdBook == dto.IdBook).FirstOrDefaultAsync();
+            var likedBook = await _context.FavoriteBooks.Where(x => x.IdReader == user.IdReader && x.IdBook == dto.IdBook).FirstOrDefaultAsync();
             if (likedBook != null)
             {
                 _context.Remove(likedBook);

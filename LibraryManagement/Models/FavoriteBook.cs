@@ -7,7 +7,7 @@ namespace LibraryManagement.Models
     {
         [Key]
         [Column("id_book")]
-        public Guid IdBook { get; set; }
+        public string IdBook { get; set; }
 
         [Column("id_reader")]
         public string IdReader { get; set; }
@@ -15,8 +15,8 @@ namespace LibraryManagement.Models
         [Column("create_day")]
         public DateTime createDay { get; set; }
 
-        [ForeignKey("IdHeaderBook")]
-        public HeaderBook headerBook { get; set; }
+        [ForeignKey("IdBook")]
+        public Book book { get; set; }
 
         [ForeignKey("IdReader")]
         public Reader reader { get; set; }

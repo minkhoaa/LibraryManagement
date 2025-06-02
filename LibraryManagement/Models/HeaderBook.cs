@@ -18,8 +18,6 @@ namespace LibraryManagement.Models
         [Column("describe_book")]
         public string DescribeBook { get; set; }
 
-        [Column("image_book")]
-        public string ImageBook { get; set; } = "Trống";
 
         [ForeignKey("IdTypeBook")]
         public TypeBook TypeBook { get; set; }

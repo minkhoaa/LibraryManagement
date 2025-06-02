@@ -3,6 +3,6 @@
     public class EvaluationDetailInput
     {
         public string token { get; set; }
-        public Guid IdBook { get; set; }
+        public string IdBook { get; set; }
     }
 }

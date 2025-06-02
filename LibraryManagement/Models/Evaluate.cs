@@ -12,7 +12,7 @@ namespace LibraryManagement.Models
         [Column(name:"id_reader")]
         public string IdReader { get; set; }
         [Column("id_book")]
-        public Guid IdBook { get; set; }
+        public string IdBook { get; set; }
         [Column("eva_comment")]
 
         public string EvaComment { get; set; }
@@ -26,7 +26,8 @@ namespace LibraryManagement.Models
         [ForeignKey("IdReader")]
 
         public Reader Reader { get; set; }
-        [ForeignKey("IdHeaderBook")]
-        public HeaderBook HeaderBook { get; set; }
+
+        [ForeignKey("IdBook")]
+        public Book Book { get; set; }
     }
 }

@@ -23,6 +23,10 @@ namespace LibraryManagement.Models
 
         [ForeignKey("IdHeaderBook")]
         public HeaderBook HeaderBook { get; set; }
+
+        public ICollection<Evaluate> Evaluates { get; set; }
+
+        public ICollection<FavoriteBook> likedHeaderBooks { get; set; }
     }
 
 }

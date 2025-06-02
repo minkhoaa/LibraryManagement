@@ -11,8 +11,8 @@ namespace LibraryManagement.Models
         public Guid IdEvaluate { get; set; }
         [Column(name:"id_reader")]
         public string IdReader { get; set; }
-        [Column("id_headerbook")]
-        public Guid IdHeaderBook { get; set; }
+        [Column("id_book")]
+        public Guid IdBook { get; set; }
         [Column("eva_comment")]
 
         public string EvaComment { get; set; }

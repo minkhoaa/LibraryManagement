@@ -24,12 +24,6 @@ namespace LibraryManagement.Models
         [ForeignKey("IdTypeBook")]
         public TypeBook TypeBook { get; set; }
 
-
-
-        public ICollection<Evaluate> Evaluates { get; set; }
-
-        public ICollection<FavoriteBook> likedHeaderBooks { get; set; }
-
         public ICollection<BookWriting> bookWritings { get; set; }
     }
 

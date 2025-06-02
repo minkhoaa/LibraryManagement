@@ -6,8 +6,8 @@ namespace LibraryManagement.Models
     public class FavoriteBook
     {
         [Key]
-        [Column("id_headerbook")]
-        public Guid IdHeaderBook { get; set; }
+        [Column("id_book")]
+        public Guid IdBook { get; set; }
 
         [Column("id_reader")]
         public string IdReader { get; set; }

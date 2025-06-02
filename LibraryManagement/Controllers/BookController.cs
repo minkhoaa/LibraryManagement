@@ -47,15 +47,15 @@ namespace LibraryManagement.Controllers
             return NotFound(result);
         }
 
-     
-        [HttpPost("getBookAndCommentsByid")]
-        public async Task<IActionResult> getBooksAndCommentbyId([FromBody] GetHeaderBookDtoInput dto)
-        {
-            var result = await _bookService.getHeaderbookandCommentsByid(dto);
-            return Ok(result); 
-        }
-            [HttpPost("getEvaluation")]
 
+        //[HttpPost("getBookAndCommentsByid")]
+        //public async Task<IActionResult> getBooksAndCommentbyId([FromBody] GetHeaderBookDtoInput dto)
+        //{
+        //    var result = await _bookService.getHeaderbookandCommentsByid(dto);
+        //    return Ok(result); 
+        //}
+
+        [HttpPost("getEvaluation")]
         public async Task<IActionResult> getDetailedEvaluation(EvaluationDetailInput dto)
         {
             var result = await _bookService.getBooksEvaluation(dto);
@@ -70,22 +70,22 @@ namespace LibraryManagement.Controllers
             if (result == false) return Unauthorized("Vui lòng đăng nhập ");
             return Ok("Success");
         }
-        [HttpPost("getAllBooksAndComments")]
-        public async Task<IActionResult> getAllBooksAndComments([FromBody] string token)
-        {
-            var result = await _bookService.getAllHeaderbookandComments(token);
-            if (result == null) return Unauthorized("Vui lòng đăng nhập");
-            return Ok(result); 
-        }
+        //[HttpPost("getAllBooksAndComments")]
+        //public async Task<IActionResult> getAllBooksAndComments([FromBody] string token)
+        //{
+        //    var result = await _bookService.getAllHeaderbookandComments(token);
+        //    if (result == null) return Unauthorized("Vui lòng đăng nhập");
+        //    return Ok(result); 
+        //}
 
-        [HttpPost("getLikedHeaderbook")]
-        public async Task<IActionResult> getLikeHeaderBook([FromBody] string token)
-        {
-            var result = await _bookService.getLikedHeaderBook(token);
-            if (result == null) return Unauthorized("Vui lòng đăng nhập");
-            return Ok(result); 
+        //[HttpPost("getLikedHeaderbook")]
+        //public async Task<IActionResult> getLikeHeaderBook([FromBody] string token)
+        //{
+        //    var result = await _bookService.getLikedHeaderBook(token);
+        //    if (result == null) return Unauthorized("Vui lòng đăng nhập");
+        //    return Ok(result); 
 
-        }
+        //}
         [HttpDelete("deleteEvaluation")]
         public async Task<IActionResult> deleteEvaluation([FromBody]DeleteEvaluationInput dto)
         {

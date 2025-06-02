@@ -20,5 +20,8 @@ namespace LibraryManagement.Models
 
         [Column("url")]
         public string Url { get; set; }
+
+        [ForeignKey("IdBook")]
+        public Book Book { get; set; }
     }
 }

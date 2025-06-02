@@ -1,6 +1,7 @@
 ﻿using LibraryManagement.Dto.Request;
 using LibraryManagement.Repository.InterFace;
 using Microsoft.AspNetCore.Mvc;
+using System.Formats.Asn1;
 
 namespace LibraryManagement.Controllers
 {
@@ -92,6 +93,19 @@ namespace LibraryManagement.Controllers
             var user = await _bookService.DeleteEvaluation(dto);
             if (user == false) return Unauthorized();
             return Ok("Xóa thành công"); 
+        }
+
+        [HttpPost("getallheaderbooks")]
+        public async Task<IActionResult> getAllHeaderbooks([FromBody] string token)
+        {
+            var result = await _bookService.GetAllHeaderBooks(token);
+            return (result == null) ? Unauthorized("Vui lòng đăng nhập") : Ok(result); 
+        }
+        [HttpPost("getbooksandcomments")]
+        public async Task<IActionResult> getBooksAndComments([FromBody] string token)
+        {
+            var result = await _bookService.getAllBooksInDetail(token);
+            return (result == null) ? Unauthorized("Vui lòng đăng nhập") : Ok(result); 
         }
     }
 }

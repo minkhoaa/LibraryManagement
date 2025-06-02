@@ -147,7 +147,6 @@ namespace LibraryManagement.Repository
                     NameHeaderBook = headerBook.NameHeaderBook,
                     DescribeBook = headerBook.DescribeBook,
                     Authors = request.Authors,
-                    BookImage = imageUrl,
 
                     bookResponse = new BookResponse
                     {
@@ -435,34 +434,49 @@ namespace LibraryManagement.Repository
             }
         }
 
-        //public async Task<List<HeadbookAndComments>> getLikedHeaderBook(string token)
-        //{
-        //    var user = await _authen.AuthenticationAsync(token);
-        //    if (user == null) return null!;
+        public async Task<List<BooksAndComments>> getAllBooksInDetail(string token)
+        {
+            var user = await _authen.AuthenticationAsync(token);
+            if (user == null) return null!;
 
-        //    var likedPosts = await _context.LikedHeaderBooks
-        //        .AsNoTracking()
-        //        .Where(x => x.IdReader == user.IdReader)
-        //        .Include(x => x.headerBook)
-        //        .ThenInclude(a => a.Evaluates)
-        //        .Select(lhb => new HeadbookAndComments
-        //        {
-        //            idHeaderBook = lhb.headerBook.IdHeaderBook.ToString(),
-        //            nameHeaderBook = lhb.headerBook.NameHeaderBook,
-        //            describe = lhb.headerBook.DescribeBook,
-        //            isLiked = true,
-        //            Evaluations = lhb.headerBook.Evaluates.Select(e => new EvaluationDetails
-        //            {
-        //                IdEvaluation = e.IdEvaluate,
-        //                IdReader = e.IdReader,
-        //                Comment = e.EvaComment,
-        //                Rating = e.EvaStar,
-        //                Create_Date = e.CreateDate
-        //            }).ToList()
-        //        }).ToListAsync();
-        //    return likedPosts;
-        //}
+            var result = await _context.Books
+                .AsNoTracking()
+                .Include(a => a.HeaderBook)
+                .ThenInclude(x => x.bookWritings)
+                .ThenInclude(c => c.Author)
+                .Include(a => a.Evaluates)
+                .Include(a=>a.images)
+                .Select(x => new BooksAndComments
+                {
+                    idBook = x.IdBook,
+                    nameBook = x.HeaderBook.NameHeaderBook,
+                    describe = x.HeaderBook.DescribeBook,
+                    isLiked = _context.FavoriteBooks.Any(k => k.IdReader == user.IdReader && k.IdBook == x.IdBook),
+                    Evaluations = _context.Evaluates
+                                .Where(a => a.IdBook == x.IdBook)
+                                .Select(a => new EvaluationDetails
+                                {
+                                    IdEvaluation = a.IdEvaluate,
+                                    IdReader = a.IdReader,
+                                    Comment = a.EvaComment,
+                                    Rating = a.EvaStar,
+                                    Create_Date = a.CreateDate
+                                }).ToList(),
+                    Authors = x.HeaderBook.bookWritings
+                              .Select(a => new AuthorResponse
+                              {
+                                  IdAuthor = a.IdAuthor,
+                                  NameAuthor = a.Author.NameAuthor,
+                                  Biography = a.Author.Biography,
+                                  IdTypeBook = a.Author.IdTypeBook,
+                                  Nationality = a.Author.Nationality
+                              }).ToList(),
+                    image = x.images.FirstOrDefault() != null ? x.images.FirstOrDefault()!.Url : string.Empty
 
+                }).ToListAsync();
+            return result;
+        }
+   
         public async Task<bool> DeleteEvaluation(DeleteEvaluationInput dto)
         {
             var user = await _authen.AuthenticationAsync(dto.token);
@@ -474,5 +488,23 @@ namespace LibraryManagement.Repository
             return true; 
 
         }
+
+        public async Task<List<GetHeaderbookResponse>> GetAllHeaderBooks(string token)
+        {
+            var reader = await _authen.AuthenticationAsync(token);
+            if (reader == null) return null!;
+
+            var result = await _context.HeaderBooks
+                .AsNoTracking()
+                .Select(a => new GetHeaderbookResponse
+                {
+                    IdHeaderbook = a.IdHeaderBook,
+                    NameBook = a.NameHeaderBook,
+                    Describe = a.DescribeBook
+                }).ToListAsync();
+
+            return result; 
+        }
+
     }
 }

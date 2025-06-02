@@ -1,9 +1,9 @@
 ﻿namespace LibraryManagement.Dto.Response
 {
-    public class HeadbookAndComments
+    public class BooksAndComments
     {
-        public string idHeaderBook { get; set; }
-        public string nameHeaderBook { get; set; }
+        public string idBook { get; set; }
+        public string nameBook { get; set; }
         public string describe { get; set; }
 
         public string image {  get; set; }

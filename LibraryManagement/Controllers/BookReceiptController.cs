@@ -17,7 +17,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint thêm phiếu nhập sách
         [HttpPost("add_bookreceipt")]
-        public async Task<IActionResult> addBookReceipt([FromBody] BookReceiptRequest request)
+        public async Task<IActionResult> addBookReceipt([FromForm] BookReceiptRequest request)
         {
             var result = await _bookReceiptService.addBookReceiptAsync(request);
             if (result.Success)

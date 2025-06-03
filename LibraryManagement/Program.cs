@@ -35,6 +35,8 @@ builder.Configuration["EmailSettings:EnableSSL"] = Environment.GetEnvironmentVar
 builder.Configuration["CloudinarySettings:CloudName"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__CLOUDNAME");
 builder.Configuration["CloudinarySettings:ApiKey"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APIKEY");
 builder.Configuration["CloudinarySettings:ApiSecret"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APISECRET");
+builder.Configuration["OpenAI:ApiKey"] = Environment.GetEnvironmentVariable("OPENAI__APIKEY");
+
 
 
 //NpgsqlConnection.GlobalTypeMapper.MapDateTime(DateTimeKind.Utc);
@@ -118,6 +120,8 @@ builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
 builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 
+// Cấu hình tích hợp chatbot gpt
+builder.Services.AddHttpClient<OpenAIService>();
 
 // Cấu hình up ảnh lên Cloudinary
 var account = new Account(

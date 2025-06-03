@@ -11,16 +11,9 @@ namespace LibraryManagement.Dto.Response
     }
     public class CategoryDetailReportResponse
     {
-        [Column("id_categoryreport")]
         public Guid IdCategoryReport { get; set; }
-
-        [Column("id_typebook")]
         public TypeBookResponse typeBookResponse { get; set; }
-
-        [Column("borrow_count")]
         public int BorrowCount { get; set; }
-
-        [Column("borrow_ratio")]
         public float BorrowRatio { get; set; }
     }
 }

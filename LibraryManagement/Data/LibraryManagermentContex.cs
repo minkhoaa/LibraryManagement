@@ -30,8 +30,8 @@ namespace LibraryManagement.Data
         public DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
-
         public DbSet<FavoriteBook> LikedHeaderBooks { get; set; }
+        public DbSet<Otp> Otps { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,6 +60,7 @@ namespace LibraryManagement.Data
             modelBuilder.Entity<RolePermission>().ToTable("role_permission");
             modelBuilder.Entity<Parameter>().ToTable("parameters");
             modelBuilder.Entity<FavoriteBook>().ToTable("favoritebook");
+            modelBuilder.Entity<Otp>().ToTable("otp");
 
             // Composite primary keys
             modelBuilder.Entity<RolePermission>()

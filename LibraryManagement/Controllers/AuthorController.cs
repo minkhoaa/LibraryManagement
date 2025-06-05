@@ -33,7 +33,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint thêm tác giả
         [HttpPost("add_author")]
-        public async Task<IActionResult> addAuthor(AuthorRequest request)
+        public async Task<IActionResult> addAuthor([FromForm] AuthorRequest request)
         {
             var result = await _authorService.addAuthorAsync(request);
             if (result.Success)
@@ -43,7 +43,7 @@ namespace LibraryManagement.Controllers
 
         // Endpoint sửa tác giả
         [HttpPut("update_author/{idAuthor}")]
-        public async Task<IActionResult> updateAuthor(AuthorRequest request, Guid idAuthor)
+        public async Task<IActionResult> updateAuthor([FromForm] AuthorRequest request, Guid idAuthor)
         {
             var result = await _authorService.updateAuthorAsync(request, idAuthor);
             if (result.Success)
@@ -60,6 +60,7 @@ namespace LibraryManagement.Controllers
                 return Ok(result);
             return NotFound(result);
         }
+
         [HttpPost("findAuthor")]
         public async Task<IActionResult> findAuthor([FromBody] FindAuthorInputDto dto)
         {

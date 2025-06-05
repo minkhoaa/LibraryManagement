@@ -36,6 +36,8 @@ builder.Configuration["EmailSettings:EnableSSL"] = Environment.GetEnvironmentVar
 builder.Configuration["CloudinarySettings:CloudName"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__CLOUDNAME");
 builder.Configuration["CloudinarySettings:ApiKey"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APIKEY");
 builder.Configuration["CloudinarySettings:ApiSecret"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APISECRET");
+builder.Configuration["OpenAI:ApiKey"] = Environment.GetEnvironmentVariable("OPENAI__APIKEY");
+
 
 
 //NpgsqlConnection.GlobalTypeMapper.MapDateTime(DateTimeKind.Utc);
@@ -138,6 +140,7 @@ builder.Services.AddScoped<ICategoryReportService, CategoryReportService>();
 builder.Services.AddScoped<IOverdueReportService, OverdueReportService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
+builder.Services.AddScoped<IForgotPasswordService, ForgotPasswordService>();
 builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 

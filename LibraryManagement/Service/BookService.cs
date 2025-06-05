@@ -49,18 +49,15 @@ namespace LibraryManagement.Repository
                     return ApiResponse<HeaderBookResponse>.FailResponse($"Khoảng cách năm xuất bản phải nhỏ hơn {publishGap}", 400);
                 }
 
-
                 // Tạo đầu sách
                 string imageUrl = null;
 
-                var typeBookTask = _context.TypeBooks.AsNoTracking()
-             .FirstOrDefaultAsync(typebook => typebook.IdTypeBook == request.IdTypeBook);
-                var headerBookTask = _context.HeaderBooks
+                var typeBook = await _context.TypeBooks.AsNoTracking()
+                    .FirstOrDefaultAsync(typebook => typebook.IdTypeBook == request.IdTypeBook);
+
+                var headerBook = await _context.HeaderBooks
                     .FirstOrDefaultAsync(hb => hb.NameHeaderBook == request.NameHeaderBook);
 
-                await Task.WhenAll(typeBookTask, headerBookTask);
-                var typeBook = await typeBookTask;
-                var headerBook = await headerBookTask;
                 if (typeBook == null)
                 {
                     return ApiResponse<HeaderBookResponse>.FailResponse("Không tìm thấy loại sách phù hợp", 404);
@@ -135,6 +132,23 @@ namespace LibraryManagement.Repository
                 _context.TheBooks.Add(theBook);
                 await _context.SaveChangesAsync();
 
+                // Lấy thông tin tác giả cuốn của sách
+                var authorOfBook = await _context.BookWritings
+                    .Where(bw => bw.IdHeaderBook == headerBook.IdHeaderBook)
+                    .Include(bw => bw.Author)
+                    .ToListAsync();
+
+                var authors = authorOfBook.Select(a => new AuthorOfBookResponse
+                {
+                    IdAuthor = a.Author.IdAuthor,
+                    NameAuthor = a.Author.NameAuthor
+                }).ToList();
+
+                // Lấy hình ảnh cuốn sách
+                var imageBook = await _context.Images
+                    .Where(img => img.IdBook == book.IdBook)
+                    .Select(img => img.Url)
+                    .FirstOrDefaultAsync();
 
                 // Ánh xạ response
                 var response = new HeaderBookResponse
@@ -146,7 +160,7 @@ namespace LibraryManagement.Repository
                     },
                     NameHeaderBook = headerBook.NameHeaderBook,
                     DescribeBook = headerBook.DescribeBook,
-                    Authors = request.Authors,
+                    Authors = authors,
 
                     bookResponse = new BookResponse
                     {
@@ -154,6 +168,7 @@ namespace LibraryManagement.Repository
                         Publisher = book.Publisher,
                         ReprintYear = book.ReprintYear,
                         ValueOfBook = book.ValueOfBook,
+                        UrlImage = imageBook,
                     },
                     thebookReponse = new TheBookResponse
                     {
@@ -249,25 +264,33 @@ namespace LibraryManagement.Repository
                 };
                 await _context.HeaderBooks.AddAsync(headerBook);
                 await _context.SaveChangesAsync();
-
-                if (request.IdAuthors != null && request.IdAuthors.Any()) // Duyệt qua danh sách tác giả
-                {
-                    foreach (var authorId in request.IdAuthors)
-                    {
-                        var createBook = new BookWriting
-                        {
-                            IdHeaderBook = headerBook.IdHeaderBook,
-                            IdAuthor = authorId
-                        };
-                        await _context.BookWritings.AddAsync(createBook); // Nạp dữ liệu vào bảng sáng tác
-                    }
-                }
             }else
             {
                 headerBook.DescribeBook = request.DescribeBook; // Luôn cập nhật Describe của Book
                 _context.HeaderBooks.Update(headerBook);
                 await _context.SaveChangesAsync();
             }
+
+            // Xoá toàn bộ tác giả cũ
+            var oldBookWritings = await _context.BookWritings
+                .Where(bw => bw.IdHeaderBook == headerBook.IdHeaderBook)
+                .ToListAsync();
+
+            _context.BookWritings.RemoveRange(oldBookWritings);
+
+            if (request.IdAuthors != null && request.IdAuthors.Any()) // Duyệt qua danh sách tác giả
+            {
+                foreach (var authorId in request.IdAuthors)
+                {
+                    var createBook = new BookWriting
+                    {
+                        IdHeaderBook = headerBook.IdHeaderBook,
+                        IdAuthor = authorId
+                    };
+                    await _context.BookWritings.AddAsync(createBook); // Nạp dữ liệu vào bảng sáng tác
+                }
+            }
+            await _context.SaveChangesAsync();
 
             // Cập nhật thông tin sách
             checkBook.Publisher = request.bookUpdateRequest.Publisher;
@@ -282,6 +305,51 @@ namespace LibraryManagement.Repository
             }
             // Cập nhật thông tin cuốn sách
             checkTheBook.Status = request.theBookUpdateRequest.Status;
+            await _context.SaveChangesAsync();
+
+            // Cập nhật hình ảnh
+            if (request.BookImage != null && request.BookImage.Length > 0)
+            {
+                var imageUrl = await _upLoadImageFileRepository.UploadImageAsync(request.BookImage);
+
+                var image = await _context.Images
+                    .FirstOrDefaultAsync(img => img.IdBook == checkBook.IdBook);
+
+                if (image != null) // Nếu đã có ảnh rồi thì cập nhật
+                {
+                    image.Url = imageUrl;
+                    _context.Images.Update(image);
+                }
+                else // Nếu chưa có thì thêm mới
+                {
+                    var newImage = new Image
+                    {
+                        IdBook = checkBook.IdBook,
+                        Url = imageUrl
+                    };
+                    await _context.Images.AddAsync(newImage);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            // Lấy thông tin tác giả cuốn của sách
+            var authorOfBook = await _context.BookWritings
+                .Where(bw => bw.IdHeaderBook == headerBook.IdHeaderBook)
+                .Include(bw => bw.Author)
+                .ToListAsync();
+
+            var authors = authorOfBook.Select(a => new AuthorOfBookResponse
+            {
+                IdAuthor = a.Author.IdAuthor,
+                NameAuthor = a.Author.NameAuthor
+            }).ToList();
+
+            // Lấy hình ảnh cuốn sách
+            var imageBook = await _context.Images
+                .Where(img => img.IdBook == checkBook.IdBook)
+                .Select(img => img.Url)
+                .FirstOrDefaultAsync();
 
             // Ánh xạ response
             var response = new HeaderBookResponse
@@ -293,7 +361,7 @@ namespace LibraryManagement.Repository
                 },
                 NameHeaderBook = headerBook.NameHeaderBook,
                 DescribeBook = headerBook.DescribeBook,
-                Authors = request.IdAuthors,
+                Authors = authors,
 
                 bookResponse = new BookResponse
                 {
@@ -301,6 +369,7 @@ namespace LibraryManagement.Repository
                     Publisher = checkBook.Publisher,
                     ReprintYear = checkBook.ReprintYear,
                     ValueOfBook = checkBook.ValueOfBook,
+                    UrlImage = imageBook,
                 },
                 thebookReponse = new TheBookResponse
                 {
@@ -468,7 +537,11 @@ namespace LibraryManagement.Repository
                                   IdAuthor = a.IdAuthor,
                                   NameAuthor = a.Author.NameAuthor,
                                   Biography = a.Author.Biography,
-                                  IdTypeBook = a.Author.IdTypeBook,
+                                  IdTypeBook = new TypeBookResponse
+                                  {
+                                      IdTypeBook = a.Author.TypeBook.IdTypeBook,
+                                      NameTypeBook = a.Author.TypeBook.NameTypeBook
+                                  },
                                   Nationality = a.Author.Nationality
                               }).ToList(),
                     image = x.images.FirstOrDefault() != null ? x.images.FirstOrDefault()!.Url : string.Empty

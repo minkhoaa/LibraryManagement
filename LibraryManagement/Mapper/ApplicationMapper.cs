@@ -11,7 +11,10 @@ namespace LibraryManagement.Mapper
         {
             // Mapper Author
             CreateMap<AuthorRequest, Author>();
-            CreateMap<Author, AuthorResponse>();
+            CreateMap<Author, AuthorResponse>()
+                .ForMember(dest => dest.IdTypeBook, opt => opt.Ignore())
+                .ForMember(dest => dest.UrlAvatar, opt => opt.Ignore());
+
 
             // Mapper TypeReader
             CreateMap<TypeReaderRequest, TypeReader>();

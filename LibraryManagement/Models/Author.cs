@@ -25,6 +25,7 @@ namespace LibraryManagement.Models
         public TypeBook TypeBook { get; set; }
 
         public ICollection<BookWriting> BookWritings { get; set; }
+        public ICollection<Image> Images { get; set; }
     }
 
 }

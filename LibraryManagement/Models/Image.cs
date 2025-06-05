@@ -23,5 +23,11 @@ namespace LibraryManagement.Models
 
         [ForeignKey("IdBook")]
         public Book Book { get; set; }
+
+        [ForeignKey("IdAuthor")]
+        public Author Author { get; set; }
+
+        [ForeignKey("IdReader")]
+        public Reader Reader { get; set; }
     }
 }

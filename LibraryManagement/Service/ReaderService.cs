@@ -15,19 +15,19 @@ namespace LibraryManagement.Repository
         private readonly LibraryManagermentContext _context;
         private readonly IMapper _mapper;
         private readonly IAuthenService _account;
-        private readonly IParameterService _parameterRepository;
-        private readonly IUpLoadImageFileService _upLoadImageFileRepository;
+        private readonly IParameterService _parameterService;
+        private readonly IUpLoadImageFileService _upLoadImageFileService;
         public ReaderService(LibraryManagermentContext contex, 
                                 IMapper mapper, 
                                 IAuthenService authen,
-                                IParameterService parameterRepository,
-                                IUpLoadImageFileService upLoadImageFileRepository)
+                                IParameterService parameterService,
+                                IUpLoadImageFileService upLoadImageFileService)
         {
             _account = authen;
             _context = contex;
             _mapper = mapper;
-            _parameterRepository = parameterRepository;
-            _upLoadImageFileRepository = upLoadImageFileRepository;
+            _parameterService = parameterService;
+            _upLoadImageFileService = upLoadImageFileService;
         }
 
         // Hàm tạo Id độc giả
@@ -56,8 +56,8 @@ namespace LibraryManagement.Repository
             if (request.Dob.Date > DateTime.Now.AddYears(-readerAge)) // Kiểm đã qua sinh nhật hay chưa
                 readerAge--;
 
-            int minAge = await _parameterRepository.getValueAsync("MinReaderAge");
-            int maxAge = await _parameterRepository.getValueAsync("MaxReaderAge");
+            int minAge = await _parameterService.getValueAsync("MinReaderAge");
+            int maxAge = await _parameterService.getValueAsync("MaxReaderAge");
             if(readerAge < minAge || readerAge > maxAge) // Kiểm tra tuổi độc giả
             {
                 return ApiResponse<ReaderResponse>.FailResponse($"Tuổi độc giả phải từ {minAge} đến {maxAge} tuổi", 400);
@@ -67,7 +67,7 @@ namespace LibraryManagement.Repository
             string imageUrl = null;
             if (request.AvatarImage != null)
             {
-                imageUrl = await _upLoadImageFileRepository.UploadImageAsync(request.AvatarImage);
+                imageUrl = await _upLoadImageFileService.UploadImageAsync(request.AvatarImage);
             }
 
             var newReader = new Reader
@@ -101,10 +101,20 @@ namespace LibraryManagement.Repository
                 await _context.SaveChangesAsync();
             }
 
+            var typeReader = await _context.TypeReaders
+                .Where(tr => tr.IdTypeReader == newReader.IdTypeReader)
+                .Select(tr => new TypeReaderResponse
+                {
+                    idTypeReader = tr.IdTypeReader,
+                    NameTypeReader = tr.NameTypeReader
+                })
+                .FirstOrDefaultAsync();
+
+
             var readerResponse = new ReaderResponse
             {
                 IdReader = newReader.IdReader,
-                IdTypeReader = newReader.IdTypeReader,
+                IdTypeReader = typeReader,
                 NameReader = newReader.NameReader,
                 Sex = newReader.Sex,
                 Address = newReader.Address,
@@ -123,15 +133,45 @@ namespace LibraryManagement.Repository
         public async Task<List<ReaderResponse>> getAllReaderAsync(string token)
         {
             var reader = await _account.AuthenticationAsync(token);
-
             var role = await _account.UserRoleCheck(token);
 
             if (reader == null || role != 0) return null!;
 
-            
-            var listReaders = await _context.Readers.ToListAsync(); 
-            return _mapper.Map<List<ReaderResponse>>(listReaders);
+            var listReader = await _context.Readers
+                .Include(r => r.Images)
+                .Include(r => r.TypeReader)
+                .ToListAsync();
+
+            var readerResponse = new List<ReaderResponse>();
+
+            foreach (var readerInf in listReader)
+            {
+                var response = new ReaderResponse
+                {
+                    IdReader = readerInf.IdReader,
+                    NameReader = readerInf.NameReader,
+                    Sex = readerInf.Sex,
+                    Address = readerInf.Address,
+                    Email = readerInf.Email,
+                    Dob = readerInf.Dob,
+                    Phone = readerInf.Phone,
+                    CreateDate = readerInf.CreateDate,
+                    ReaderAccount = readerInf.Email,
+                    TotalDebt = readerInf.TotalDebt,
+                    UrlAvatar = readerInf.Images?.FirstOrDefault()?.Url,
+                    IdTypeReader = readerInf.TypeReader != null
+                        ? new TypeReaderResponse
+                        {
+                            idTypeReader = readerInf.TypeReader.IdTypeReader,
+                            NameTypeReader = readerInf.TypeReader.NameTypeReader
+                        }
+                        : null
+                };
+                readerResponse.Add(response);
+            }
+            return readerResponse;
         }
+
 
         // Hàm sửa độc giả
         public async Task<ApiResponse<ReaderResponse>> updateReaderAsync(ReaderUpdateRequest request, string idReader)
@@ -146,8 +186,8 @@ namespace LibraryManagement.Repository
             if (request.Dob.Date > DateTime.Now.AddYears(-readerAge)) // Kiểm đã qua sinh nhật hay chưa
                 readerAge--;
 
-            int minAge = await _parameterRepository.getValueAsync("MinReaderAge");
-            int maxAge = await _parameterRepository.getValueAsync("MaxReaderAge");
+            int minAge = await _parameterService.getValueAsync("MinReaderAge");
+            int maxAge = await _parameterService.getValueAsync("MaxReaderAge");
             if (readerAge < minAge || readerAge > maxAge) // Kiểm tra tuổi độc giả
             {
                 return ApiResponse<ReaderResponse>.FailResponse($"Tuổi độc giả phải từ {minAge} đến {maxAge} tuổi", 400);
@@ -157,7 +197,7 @@ namespace LibraryManagement.Repository
             string imageUrl = null;
             if (request.AvatarImage != null)
             {
-                imageUrl = await _upLoadImageFileRepository.UploadImageAsync(request.AvatarImage);
+                imageUrl = await _upLoadImageFileService.UploadImageAsync(request.AvatarImage);
             }
 
             updateReader.IdTypeReader = request.IdTypeReader;
@@ -193,10 +233,19 @@ namespace LibraryManagement.Repository
                 }
             }
 
+            var typeReader = await _context.TypeReaders
+                .Where(tr => tr.IdTypeReader == updateReader.IdTypeReader)
+                .Select(tr => new TypeReaderResponse
+                {
+                    idTypeReader = tr.IdTypeReader,
+                    NameTypeReader = tr.NameTypeReader
+                })
+                .FirstOrDefaultAsync();
+
             var readerResponse = new ReaderResponse
             {
                 IdReader = updateReader.IdReader,
-                IdTypeReader = updateReader.IdTypeReader,
+                IdTypeReader = typeReader,
                 NameReader = updateReader.NameReader,
                 Sex = updateReader.Sex,
                 Address = updateReader.Address,

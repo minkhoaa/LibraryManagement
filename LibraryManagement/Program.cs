@@ -120,8 +120,6 @@ builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
 builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 
-// Cấu hình tích hợp chatbot gpt
-builder.Services.AddHttpClient<OpenAIService>();
 
 // Cấu hình up ảnh lên Cloudinary
 var account = new Account(

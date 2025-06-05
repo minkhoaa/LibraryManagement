@@ -468,7 +468,11 @@ namespace LibraryManagement.Repository
                                   IdAuthor = a.IdAuthor,
                                   NameAuthor = a.Author.NameAuthor,
                                   Biography = a.Author.Biography,
-                                  IdTypeBook = a.Author.IdTypeBook,
+                                  IdTypeBook = new TypeBookResponse
+                                  {
+                                      IdTypeBook = a.Author.TypeBook.IdTypeBook,
+                                      NameTypeBook = a.Author.TypeBook.NameTypeBook
+                                  },
                                   Nationality = a.Author.Nationality
                               }).ToList(),
                     image = x.images.FirstOrDefault() != null ? x.images.FirstOrDefault()!.Url : string.Empty

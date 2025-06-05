@@ -6,5 +6,6 @@
         public string NameAuthor { get; set; }
         public string Nationality { get; set; }
         public string Biography { get; set; }
+        public IFormFile AvatarImage { get; set; }
     }
 }

@@ -117,6 +117,7 @@ builder.Services.AddScoped<ICategoryReportService, CategoryReportService>();
 builder.Services.AddScoped<IOverdueReportService, OverdueReportService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
+builder.Services.AddScoped<IForgotPasswordService, ForgotPasswordService>();
 builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 

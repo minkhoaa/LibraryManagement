@@ -1,21 +1,22 @@
-﻿using LibraryManagement.Data;
-using LibraryManagement.Helpers.Interface;
+﻿using CloudinaryDotNet;
+using LibraryManagement.Data;
 using LibraryManagement.Helpers;
+using LibraryManagement.Helpers.Interface;
+using LibraryManagement.Models;
 using LibraryManagement.Repository;
+using LibraryManagement.Repository.InterFace;
 using LibraryManagement.Repository.IRepository;
+using LibraryManagement.Service;
+using LibraryManagement.Service.Interface;
+using LibraryManagement.Service.InterFace;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using LibraryManagement.Repository.InterFace;
-using LibraryManagement.Models;
 using Microsoft.Extensions.Options;
-using CloudinaryDotNet;
-using System.Net;
-using LibraryManagement.Service.InterFace;
-using LibraryManagement.Service;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Npgsql;
-using LibraryManagement.Service.Interface;
+using System.Net;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +44,32 @@ builder.Configuration["CloudinarySettings:ApiSecret"] = Environment.GetEnvironme
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnglishApp API", Version = "v1" });
+
+    var jwtScheme = new OpenApiSecurityScheme
+    {
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Description = "Nhập JWT Bearer token (chỉ phần token, không kèm 'Bearer ').",
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme, 
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+    c.AddSecurityDefinition(jwtScheme.Reference.Id, jwtScheme);
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { jwtScheme, Array.Empty<string>() }
+    });
+});
+
 
 // Cấu hình cho phép tất cả các ứng dụng được gọi đến API
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
@@ -67,10 +93,7 @@ builder.Services.AddDbContext<LibraryManagermentContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(option =>
-{
-    option.SwaggerDoc("v1", new() { Title = "LibraryManagement", Version = "v1" });
-});
+
 // Đăng ký sử dụng Mapper
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -89,7 +112,7 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuer = false,
         ValidateAudience = false,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]!))
     };
 });
 
@@ -131,7 +154,7 @@ builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 
 builder.Services.AddFluentEmail("noreply@gmail.com", "Your Name")
-                .AddSmtpSender(new System.Net.Mail.SmtpClient(emailConfig.SmtpServer)
+                .AddSmtpSender(new System.Net.Mail.SmtpClient(emailConfig!.SmtpServer)
                 {
                     Port = emailConfig.SmtpPort,
                     Credentials = new NetworkCredential(emailConfig.SenderEmail, emailConfig.SenderPassword), 
@@ -142,19 +165,19 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        c.RoutePrefix = "swagger"; // Swagger UI sẽ ở /docs
-        c.DocumentTitle = "API Docs";
-    });
+
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    c.RoutePrefix = "swagger"; // Swagger UI sẽ ở /docs
+    c.DocumentTitle = "API Docs";
+});
 app.MapControllers();
 
 

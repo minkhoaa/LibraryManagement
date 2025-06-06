@@ -36,9 +36,11 @@ builder.Configuration["EmailSettings:EnableSSL"] = Environment.GetEnvironmentVar
 builder.Configuration["CloudinarySettings:CloudName"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__CLOUDNAME");
 builder.Configuration["CloudinarySettings:ApiKey"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APIKEY");
 builder.Configuration["CloudinarySettings:ApiSecret"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APISECRET");
-builder.Configuration["OpenAI:ApiKey"] = Environment.GetEnvironmentVariable("OPENAI__APIKEY");
+builder.Configuration["ConnectionStrings:MongoDbConnection"] = Environment.GetEnvironmentVariable("CONNECTIONSTRINGS__MongoDbConnection");
 
 
+// Connect to MongoDB
+builder.Services.AddSingleton<MessageService>();
 
 //NpgsqlConnection.GlobalTypeMapper.MapDateTime(DateTimeKind.Utc);
 
@@ -167,9 +169,6 @@ builder.Services.AddMemoryCache();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
-
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

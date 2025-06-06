@@ -36,7 +36,7 @@ builder.Configuration["EmailSettings:EnableSSL"] = Environment.GetEnvironmentVar
 builder.Configuration["CloudinarySettings:CloudName"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__CLOUDNAME");
 builder.Configuration["CloudinarySettings:ApiKey"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APIKEY");
 builder.Configuration["CloudinarySettings:ApiSecret"] = Environment.GetEnvironmentVariable("CLOUDINARYSETTINGS__APISECRET");
-builder.Configuration["ConnectionStrings:MongoDbConnection"] = Environment.GetEnvironmentVariable("CONNECTIONSTRINGS__MongoDbConnection");
+builder.Configuration["MongoDB:ConnectionString"] = Environment.GetEnvironmentVariable("CONNECTIONSTRINGS__MongoDbConnection");
 
 
 // Connect to MongoDB

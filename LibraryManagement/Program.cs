@@ -155,7 +155,7 @@ builder.Services.AddScoped<IUpLoadImageFileService, UpLoadImageFileService>();
 
 
 
-builder.Services.AddFluentEmail("noreply@gmail.com", "Your Name")
+builder.Services.AddFluentEmail("noreply@gmail.com", "no reply")
                 .AddSmtpSender(new System.Net.Mail.SmtpClient(emailConfig!.SmtpServer)
                 {
                     Port = emailConfig.SmtpPort,

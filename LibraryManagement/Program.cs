@@ -167,7 +167,8 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
-
+app.UseCors();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSwagger();
@@ -180,5 +181,4 @@ app.UseSwaggerUI(c =>
 app.MapControllers();
 
 
-app.UseCors();
 app.Run();

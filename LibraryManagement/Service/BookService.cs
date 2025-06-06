@@ -50,7 +50,7 @@ namespace LibraryManagement.Repository
                 }
 
                 // Tạo đầu sách
-                string imageUrl = null;
+                string imageUrl = null!;
 
                 var typeBook = await _context.TypeBooks.AsNoTracking()
                     .FirstOrDefaultAsync(typebook => typebook.IdTypeBook == request.IdTypeBook);
@@ -225,7 +225,7 @@ namespace LibraryManagement.Repository
                 }
             }
             await _context.SaveChangesAsync();
-            return ApiResponse<string>.SuccessResponse("Xóa sách thành công", 200, null);
+            return ApiResponse<string>.SuccessResponse("Xóa sách thành công", 200, null!);
         }
 
         // Hàm cập nhật sách
@@ -463,8 +463,6 @@ namespace LibraryManagement.Repository
         public async Task<List<EvaluationDetails>> getBooksEvaluation(EvaluationDetailInput dto)
         {
             var user = await _authen.AuthenticationAsync(dto.token);
-            var role = await _authen.UserRoleCheck(dto.token);
-            if (role != 0) return null!;
             if (user == null) return null!;
             var result = await _context.Evaluates.AsNoTracking().Where(x => x.IdBook == dto.IdBook).Take(50).Select(a => new EvaluationDetails
             {

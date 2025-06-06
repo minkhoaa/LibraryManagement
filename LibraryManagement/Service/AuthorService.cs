@@ -31,8 +31,7 @@ namespace LibraryManagement.Repository
         public async Task<List<AuthorResponse>> getListAuthor(string token)
         {
             var reader = await _account.AuthenticationAsync(token);
-            var role = await _account.UserRoleCheck(token); 
-            if (reader == null || role != 0) return null!;
+            if (reader == null ) return null!;
 
             var listAuthor = await _context.Authors
                 .Include(a => a.Images)
@@ -170,9 +169,8 @@ namespace LibraryManagement.Repository
         public async Task<List<Author>> findAuthor(FindAuthorInputDto dto)
         {
             var user = await _account.AuthenticationAsync(dto.token);
-            var role = await _account.UserRoleCheck(dto.token);
 
-            if (user == null || role != 0) return null!;
+            if (user == null ) return null!;
 
             var authors = await _context.Authors.Where(x => x.NameAuthor == dto.nameAuthor).ToListAsync();
             return authors;

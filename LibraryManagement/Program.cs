@@ -88,9 +88,6 @@ builder.Services.AddSingleton(option =>
 
 }); 
 
-// Tạo chữ ký kết nối
-
-// Đăng ký dbContex
 builder.Services.AddDbContext<LibraryManagermentContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
 builder.Services.AddControllers();

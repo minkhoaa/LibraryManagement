@@ -133,9 +133,8 @@ namespace LibraryManagement.Repository
         public async Task<List<ReaderResponse>> getAllReaderAsync(string token)
         {
             var reader = await _account.AuthenticationAsync(token);
-            var role = await _account.UserRoleCheck(token);
 
-            if (reader == null || role != 0) return null!;
+            if (reader == null) return null!;
 
             var listReader = await _context.Readers
                 .Include(r => r.Images)
@@ -276,8 +275,7 @@ namespace LibraryManagement.Repository
         public async Task<FindReaderOutputDto> findReaderAsync(FindReaderInputDto dto)
         {
             var user = await _account.AuthenticationAsync(dto.token);
-            var role = await _account.UserRoleCheck(dto.token);
-            if (user == null || role != 0) return null!;
+            if (user == null) return null!;
 
             var listReader = await _context.Readers.Where(x => x.ReaderUsername == dto.username).Select(a => new FindReaderOutputDto
             {

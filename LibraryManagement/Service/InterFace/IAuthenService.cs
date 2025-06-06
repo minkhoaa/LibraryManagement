@@ -16,7 +16,6 @@ namespace LibraryManagement.Repository.IRepository
 
         public Task<ReaderAuthenticationResponse?> AuthenticationAsync(string accessToken);
 
-        public Task<int> UserRoleCheck(string token); 
 
         public Task<RefreshTokenResponse> refreshTokenAsync(string Token);
 

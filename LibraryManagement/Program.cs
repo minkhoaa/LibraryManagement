@@ -167,8 +167,10 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
-app.UseCors();
+
 app.UseRouting();
+app.UseCors();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSwagger();

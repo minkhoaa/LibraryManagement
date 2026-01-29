@@ -1,5 +1,4 @@
 # SmartLib Management System
-> **"Chuyển đổi số toàn diện nghiệp vụ Thư viện: Nâng tầm trải nghiệm tri thức."**
 
 ---
 
@@ -53,7 +52,6 @@ Các hệ thống quản lý thư viện truyền thống đang đối mặt v�
 
 ## Technical Architecture (Kiến trúc kỹ thuật)
 
-> *"Chúng tôi chọn công nghệ không phải vì nó 'hot', mà vì sự Ổn định (Stability) và Khả năng mở rộng (Scalability)."*
 
 ### Backend Core: .NET 6/8 (Clean Architecture)
 *   **Lý do:** Đây là tiêu chuẩn vàng cho các ứng dụng doanh nghiệp nhờ tính định kiểu mạnh (Strong Typing) và hiệu năng xử lý cao.
@@ -78,4 +76,3 @@ Các hệ thống quản lý thư viện truyền thống đang đối mặt v�
 *   **Phase 3 (Q1/2027):** Phát triển Mobile Super App cho độc giả (Scan QR mượn sách tại kệ).
 
 ---
-*Built with High-Performance Code.*

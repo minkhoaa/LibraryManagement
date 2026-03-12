@@ -11,31 +11,31 @@
 
 ## Executive Summary
 
-### The Problem (Thách thức thị trường)
+### The Problem
 
-Các thư viện hiện đại đang đối mặt với một nghịch lý: **nhu cầu số hóa tăng cao** nhưng **công nghệ vận hành vẫn lạc hậu**. Cụ thể:
+Modern libraries are facing a paradox: **growing demand for digitization** but **outdated operational technology**. Specifically:
 
-| Thách thức | Hậu quả |
+| Challenge | Consequence |
 |:---|:---|
-| **Quy trình mượn/trả thủ công** | Tốn 15-20 phút/giao dịch, hàng đợi dài, trải nghiệm người dùng kém |
-| **Thiếu kiểm soát tài sản** | Sách mất mát, hư hỏng không phát hiện kịp thời, thất thoát lên tới 5-10%/năm |
-| **Báo cáo offline, chậm trễ** | Ban quản lý ra quyết định mua sắm dựa trên cảm tính, không có dữ liệu thực tế |
-| **Không tương tác với độc giả** | Không nắm bắt được nhu cầu, xu hướng đọc của cộng đồng |
+| **Manual borrowing/returning processes** | 15–20 minutes per transaction, long queues, poor user experience |
+| **Lack of asset control** | Lost or damaged books not detected in time, losses reaching 5–10% per year |
+| **Offline and delayed reporting** | Management makes purchasing decisions based on intuition, not real data |
+| **No reader engagement** | No insight into community reading needs and trends |
 
 
 
-### The Solution (Giải pháp của chúng tôi)
+### The Solution
 
-**SmartLib** không chỉ là phần mềm quản lý—đây là **nền tảng ERP thu nhỏ dành riêng cho thư viện**, kết hợp:
+**SmartLib** is not just management software — it is a **miniaturized ERP platform built specifically for libraries**, combining:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │   SMARTLIB = Automation + Intelligence + Engagement            │
 │                                                                 │
-│   • Tự động hóa 90% nghiệp vụ mượn/trả                         │
-│   • Business Intelligence tích hợp sẵn                         │
-│   • Giao diện hiện đại, responsive trên mọi thiết bị           │
-│   • Triển khai nhanh chóng với Docker (< 10 phút)              │
+│   • Automates 90% of borrowing/returning operations            │
+│   • Built-in Business Intelligence                             │
+│   • Modern, responsive interface on all devices                │
+│   • Rapid deployment with Docker (< 10 minutes)               │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -48,13 +48,13 @@ Các thư viện hiện đại đang đối mặt với một nghịch lý: **nh
 <td width="50%">
 
 ### Operational Excellence
-**Giảm 80% thời gian xử lý** mỗi giao dịch mượn/trả nhờ quy trình tự động hóa end-to-end. Hệ thống tự động tính ngày quá hạn, số tiền phạt chính xác đến từng xu—**zero human error**.
+**80% reduction in processing time** per borrowing/returning transaction through end-to-end automation. The system automatically calculates due dates and fine amounts to the cent — **zero human error**.
 
 </td>
 <td width="50%">
 
-### Risk Mitigation  
-Kiểm soát chặt chẽ tài sản thư viện thông qua module **Penalty Tracking** và **Overdue Reporting**. Phát hiện vi phạm tức thời, giảm thiểu thất thoát sách và tối ưu vòng đời tài sản.
+### Risk Mitigation
+Tight control over library assets through the **Penalty Tracking** and **Overdue Reporting** modules. Instant violation detection minimizes book loss and optimizes asset lifecycle.
 
 </td>
 </tr>
@@ -62,13 +62,13 @@ Kiểm soát chặt chẽ tài sản thư viện thông qua module **Penalty Tra
 <td width="50%">
 
 ### Data-Driven Decisions
-**Business Intelligence tích hợp**: Báo cáo danh mục sách hot nhất, xu hướng mượn theo mùa, phân tích hành vi độc giả—tất cả **real-time**. Ra quyết định mua sắm dựa trên **data, không phải cảm tính**.
+**Built-in Business Intelligence**: Reports on the most borrowed book categories, seasonal borrowing trends, and reader behavior analysis — all **real-time**. Make purchasing decisions based on **data, not intuition**.
 
 </td>
 <td width="50%">
 
 ### Modern Engagement
-Tích hợp **Chat & Review System**: Độc giả có thể đánh giá sách, comment, và nhắn tin trực tiếp với thủ thư. Biến thư viện thành **cộng đồng sống động**.
+Integrated **Chat & Review System**: Readers can rate books, leave comments, and message librarians directly. Turn the library into a **vibrant community**.
 
 </td>
 </tr>
@@ -79,45 +79,45 @@ Tích hợp **Chat & Review System**: Độc giả có thể đánh giá sách, 
 ## Feature Highlights
 
 ### 1. Inventory & Catalog Management
-| Tính năng | Mô tả |
+| Feature | Description |
 |:---|:---|
-| **Smart Book Receipt** | Nhập sách hàng loạt với phân loại tự động theo tác giả, thể loại, nhà xuất bản |
-| **3-Level Book Hierarchy** | Quản lý chi tiết: Đầu sách (HeaderBook) → Sách (Book) → Cuốn sách (TheBook) |
-| **Cloud Media Storage** | Ảnh bìa sách lưu trữ trên **Cloudinary CDN**—tốc độ tải cực nhanh, giảm tải server |
-| **Full-text Search** | Tìm kiếm sách theo tên, tác giả, thể loại với auto-complete |
+| **Smart Book Receipt** | Bulk book intake with automatic classification by author, genre, and publisher |
+| **3-Level Book Hierarchy** | Detailed management: Title (HeaderBook) → Book → Copy (TheBook) |
+| **Cloud Media Storage** | Book cover images stored on **Cloudinary CDN** — extremely fast loading, reduced server load |
+| **Full-text Search** | Search books by title, author, and genre with auto-complete |
 
 ### 2. Circulation & Lending
-| Tính năng | Mô tả |
+| Feature | Description |
 |:---|:---|
-| **Smart Loan Slip** | Tạo phiếu mượn với validation real-time: kiểm tra nợ, giới hạn mượn, thời hạn thẻ |
-| **Auto Fine Calculation** | Tính phạt tự động dựa trên cấu hình động. **Thay đổi policy không cần code** |
-| **Overdue Tracking** | Dashboard theo dõi sách quá hạn theo ngày/tuần/tháng với alert system |
-| **Multi-Reader Types** | Phân loại độc giả (Sinh viên, Giảng viên, Khách) với policy mượn khác nhau |
+| **Smart Loan Slip** | Create loan slips with real-time validation: check outstanding debts, borrowing limits, and card expiry |
+| **Auto Fine Calculation** | Automatic fine calculation based on dynamic configuration. **Change policy without code changes** |
+| **Overdue Tracking** | Dashboard for tracking overdue books by day/week/month with alert system |
+| **Multi-Reader Types** | Reader classification (Student, Lecturer, Guest) with different borrowing policies |
 
 ### 3. Business Intelligence & Reporting
-| Báo cáo | Giá trị |
+| Report | Value |
 |:---|:---|
-| **Category Report** | Top thể loại sách được mượn nhiều nhất—định hướng mua sắm |
-| **Overdue Report** | Danh sách vi phạm chi tiết—thu hồi tài sản hiệu quả |
-| **Reader Analytics** | Phân tích hành vi mượn đọc—personalized experience |
-| **Interactive Charts** | Visualize data với **Recharts**—beautiful & responsive |
+| **Category Report** | Top most-borrowed book categories — guide purchasing decisions |
+| **Overdue Report** | Detailed violation list — effective asset recovery |
+| **Reader Analytics** | Borrowing behavior analysis — personalized experience |
+| **Interactive Charts** | Data visualization with **Recharts** — beautiful & responsive |
 
 ### 4. Security & Access Control
-| Tính năng | Mô tả |
+| Feature | Description |
 |:---|:---|
-| **Role-Based Access (RBAC)** | Phân quyền chi tiết: Admin, Librarian, Staff, Reader |
-| **JWT + Refresh Token** | Authentication bảo mật, tự động renew session |
-| **Google OAuth 2.0** | Đăng nhập nhanh với Google Account |
-| **OTP Verification** | Xác thực email cho forgot password & signup |
+| **Role-Based Access (RBAC)** | Granular permissions: Admin, Librarian, Staff, Reader |
+| **JWT + Refresh Token** | Secure authentication with automatic session renewal |
+| **Google OAuth 2.0** | Quick sign-in with Google Account |
+| **OTP Verification** | Email verification for forgot password & signup |
 | **BCrypt Password Hashing** | Industry-standard password security |
-| **Token Invalidation** | Logout an toàn, revoke token ngay lập tức |
+| **Token Invalidation** | Safe logout with immediate token revocation |
 
 ### 5. Community & Engagement
-| Tính năng | Mô tả |
+| Feature | Description |
 |:---|:---|
-| **Book Reviews & Ratings** | Độc giả đánh giá, comment giúp cộng đồng chọn sách |
-| **Favorite Books** | Bookmark sách yêu thích, tạo reading list cá nhân |
-| **Real-time Chat** | Nhắn tin trực tiếp giữa độc giả và thủ thư (MongoDB-backed) |
+| **Book Reviews & Ratings** | Readers rate and comment to help the community choose books |
+| **Favorite Books** | Bookmark favorite books and create personal reading lists |
+| **Real-time Chat** | Direct messaging between readers and librarians (MongoDB-backed) |
 
 ---
 
@@ -126,16 +126,16 @@ Tích hợp **Chat & Review System**: Độc giả có thể đánh giá sách, 
 <table>
 <tr>
 <td align="center" width="33%">
-<h3>Thư viện Đại học</h3>
-<p>Quản lý hàng ngàn sinh viên, tài liệu học thuật đa dạng, yêu cầu báo cáo phức tạp</p>
+<h3>University Libraries</h3>
+<p>Managing thousands of students, diverse academic materials, and complex reporting requirements</p>
 </td>
 <td align="center" width="33%">
-<h3>Thư viện Công cộng</h3>
-<p>Tối ưu ngân sách, phục vụ cộng đồng đa dạng, cần UI thân thiện mọi lứa tuổi</p>
+<h3>Public Libraries</h3>
+<p>Optimizing budgets, serving diverse communities, needing a user-friendly UI for all age groups</p>
 </td>
 <td align="center" width="33%">
-<h3>Doanh nghiệp</h3>
-<p>Tủ sách nội bộ, quản lý mượn trả chuyên nghiệp cho nhân viên</p>
+<h3>Enterprises</h3>
+<p>Internal book collections, professional borrowing management for employees</p>
 </td>
 </tr>
 </table>
@@ -154,23 +154,23 @@ graph TB
         Web["React 19 SPA<br/>TypeScript + Vite"]
         Mobile["Future: Mobile App"]
     end
-    
+
     subgraph Gateway["API Gateway"]
         NGINX["NGINX Reverse Proxy<br/>Load Balancing + SSL"]
     end
-    
+
     subgraph Backend["Application Layer"]
         API[".NET 8 Web API<br/>Clean Architecture"]
         Auth["JWT + Google OAuth<br/>RBAC Engine"]
         Services["Business Services<br/>21 Domain Services"]
     end
-    
+
     subgraph Data["Data Layer"]
         PG["PostgreSQL 16<br/>ACID Transactions"]
         Mongo["MongoDB<br/>Chat & Messages"]
         Cloud["Cloudinary CDN<br/>Media Storage"]
     end
-    
+
     Web --> NGINX
     Mobile --> NGINX
     NGINX --> API
@@ -185,25 +185,25 @@ graph TB
 
 ### Backend Core: .NET 8
 
-| Lý do chọn | Giá trị kinh doanh |
+| Reason for Choice | Business Value |
 |:---|:---|
-| **Strong Typing + C# 12** | Giảm 70% lỗi runtime so với dynamic languages, tiết kiệm chi phí debug |
-| **Entity Framework Core 9** | ORM an toàn, chống SQL Injection, migration dễ dàng |
-| **Clean Architecture** | Repository + Service Pattern giúp bảo trì dễ dàng, extend không phá vỡ hệ thống |
-| **AutoMapper** | Mapping DTO ↔ Entity tự động, giảm boilerplate code 50% |
-| **Serilog** | Structured logging, dễ dàng trace issue trong production |
+| **Strong Typing + C# 12** | Reduces runtime errors by 70% compared to dynamic languages, saving debug costs |
+| **Entity Framework Core 9** | Safe ORM, SQL Injection protection, easy migrations |
+| **Clean Architecture** | Repository + Service Pattern for easy maintenance and extension without breaking the system |
+| **AutoMapper** | Automatic DTO ↔ Entity mapping, reduces boilerplate code by 50% |
+| **Serilog** | Structured logging for easy issue tracing in production |
 
 ---
 
 ### Frontend: React 19 + TypeScript + Vite
 
-| Lý do chọn | Giá trị kinh doanh |
+| Reason for Choice | Business Value |
 |:---|:---|
-| **React 19 + Concurrent Features** | UI mượt mà, không bị "đơ" khi xử lý data lớn |
-| **TypeScript Strict Mode** | Phát hiện lỗi ngay khi code, giảm 40% thời gian QA |
-| **Vite + SWC** | Build time < 2 giây, hot reload tức thì—tăng tốc development x5 |
-| **TailwindCSS 4** | Thiết kế responsive nhanh chóng, UI nhất quán |
-| **Recharts** | Biểu đồ trực quan cho báo cáo, dễ customize theo brand |
+| **React 19 + Concurrent Features** | Smooth UI that does not freeze when handling large data sets |
+| **TypeScript Strict Mode** | Detects errors at coding time, reduces QA time by 40% |
+| **Vite + SWC** | Build time < 2 seconds, instant hot reload — speeds up development 5x |
+| **TailwindCSS 4** | Rapid responsive design with consistent UI |
+| **Recharts** | Visual charts for reports, easy to customize to brand |
 
 ---
 
@@ -222,19 +222,19 @@ graph TB
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-| Công nghệ | Use Case | Lý do |
+| Technology | Use Case | Reason |
 |:---|:---|:---|
-| **PostgreSQL 16** | Transactions mượn/trả, kế toán tiền phạt, báo cáo | ACID compliance tuyệt đối, không mất dữ liệu tài chính |
-| **MongoDB** | Chat messages, real-time features | Schema linh hoạt, write throughput cao cho messaging |
+| **PostgreSQL 16** | Borrowing/returning transactions, fine accounting, reporting | Absolute ACID compliance, no financial data loss |
+| **MongoDB** | Chat messages, real-time features | Flexible schema, high write throughput for messaging |
 
 ---
 
 ### Cloud & DevOps
 
-| Công nghệ | Mục đích | Giá trị kinh doanh |
+| Technology | Purpose | Business Value |
 |:---|:---|:---|
-| **Docker Compose** | One-command deployment | Deploy toàn bộ stack trong < 10 phút, môi trường nhất quán |
-| **Cloudinary CDN** | Media storage & delivery | Offload 100% media traffic, giảm 60% bandwidth cost |
+| **Docker Compose** | One-command deployment | Deploy entire stack in < 10 minutes, consistent environment |
+| **Cloudinary CDN** | Media storage & delivery | Offloads 100% of media traffic, reduces bandwidth cost by 60% |
 | **NGINX** | Reverse proxy + SSL | Security layer, load balancing ready |
 
 ---
@@ -267,18 +267,18 @@ docker-compose up -d
 ```mermaid
 timeline
     title SmartLib Evolution Roadmap
-    
+
     2026 Q1 : Core Platform
              : Lending & Returns
              : Penalty System
              : Basic Reports
-             
+
     2026 Q2 : Enhanced Analytics
              : Advanced BI Dashboard
              : Email Notifications
              : PWA Support
-             
-    
+
+
 
 ---
 
@@ -291,4 +291,3 @@ timeline
 | **Database Tables** | 20+ normalized tables |
 | **Frontend Components** | 60+ React components |
 | **Code Coverage** | Production-ready |
-
